@@ -192,22 +192,23 @@ header {
 
     /*****************************************  Product Class ***********************/
     (function() {
-      var mProducts = [];
+      let self = this;
+      self.mProducts = [];
 
       this.Add = function(newProduct) {
-        mProducts.push(newProduct);
+        self.mProducts.push(newProduct);
       };
 
       this.Remove = function(newProduct) {
-        mProducts.push(newProduct);
+        self.mProducts.push(newProduct);
       };
       
       this.Products = function() {
-        return mProducts;
+        return self.mProducts;
       };
 
       this.GetProductByID = function(ProductID) {
-        var res = mProducts.find(element => {
+        var res = self.mProducts.find(element => {
           if (element.ProductID==ProductID) return element;
         });
         return res;
@@ -215,7 +216,7 @@ header {
 
       function init(){
         $.getJSON("api/products", null, function (data) {
-          mProducts = data.data;
+          self.mProducts = data.data;
             //******** Testing
             SSS.Product.Add({ ProductID: 3, Title: "Water3", Count: 1, Cost: 3.00});
             RefreshProductRows();
@@ -231,8 +232,8 @@ header {
 
     /*****************************************  Purchase Class ***********************/
     (function() {
-      var mPurchases = [];
-      var self = this;
+      let self = this;
+      self.mPurchases = [];
 
       this.Add = function(newPurchase) {
 
@@ -241,12 +242,12 @@ header {
         newPurchase.UnitCost = prod.Cost;
         newPurchase.Cost = new Intl.NumberFormat('en-US', { style:'currency', currency: 'USD'}).format(newPurchase.Count * prod.Cost);
         newPurchase.Title = prod.Title;
-        mPurchases.push(newPurchase);
+        self.mPurchases.push(newPurchase);
       };
       
 
       this.Purchases = function(newPurchase) {
-        return mPurchases;
+        return self.mPurchases;
       };
 
       this.init = function(){
