@@ -15,7 +15,7 @@
 
 
 body {font-family: "Lato", sans-serif;
-    background-color: #e2e2e2;
+  /*  background-color: #e2e2e2; */
 	}
 
 .monoselect {
@@ -29,7 +29,7 @@ body {font-family: "Lato", sans-serif;
   border: 1px solid #ccc;
   background-color: #f1f1f1;
   width: 10%;
-  height: 300px;
+  height: 600px;
 
     
 }
@@ -66,8 +66,8 @@ body {font-family: "Lato", sans-serif;
   border: 1px solid #ccc;
   width: 90%;
   border-left: none;
-  height: 300px;
-  background-color:rgb(99, 96, 99);
+  height: 600px;
+  /*background-color:rgb(99, 96, 99);*/
 }
 
 header {
@@ -99,22 +99,43 @@ header {
 
 		<div id="Home" class="tabcontent">
 
+
         <div style="background-color: yellow;"  class="container-fluid"> 
             <div class="row"> 
-                <div class="col-sm-3 offset-sm-2"><label class='monoselect'>Title........Count.......Cost</label></div> 
+                <div class="col-sm-3 offset-sm-1"><label class='monoselect'>Title........Count.........Cost</label></div> 
             </div>
             <div class="row"> 
-                <div class="col-sm-2"><label class="label" >Product</label></div> 
+                <div class="col-sm-1"><label class="label" >Product</label></div> 
                 <div class="col-sm-3"><SELECT class='monoselect' id='selHomeProducts' name='selProcuts' ></SELECT></div> 
             </div>
             <div class="row"> 
-                <div class="col-sm-2"><label class="label" ># Bought</label></div> 
-                <div class="col-sm-2"><input id='txtHomeCount' type="text" class="form-control" /></div>
-            </div>  
-            <div class="row"> 
+              <div class="col-sm-1"><label class="label" ># Bought</label></div> 
+              <div class="col-sm-2"><input id='txtHomeCount' type="text" class="form-control" /></div>
+          </div>  
+          <div class="row"> 
+            <div class="col-sm-1"><label class="label" >Date of Purchase</label></div> 
+            <div class="col-sm-2"><input id='txtHomeDate' type="date" class="form-control" /></div>
+        </div>  
+        <div class="row"> 
+          <div class="col-sm-2"></div> 
+      </div>  
+      <div class="row"> 
                 <div class="col-sm-12 offset-sm-2"><INPUT id='btnHomeAdd' type=button value='Add Purchase' /></div> 
             </div>  
         </div>
+
+        <table id="tblPurchaseData2" class="table table-responsive table-striped table-hover table-condensed">
+          <tr  style="background-color: orangered;">
+              <th>Title</th>
+              <th>Unit Count</th>
+              <th>Unit Cost</th>
+              <th>Count</th>
+              <th>Cost</th>
+              <th>Date</th>
+            </tr>
+        </table>
+  
+
         <div  style="background-color: orangered;"  class="container-fluid"> 
             <div class="row"> 
                 <div class="col-sm-12 offset-sm-2">Maintain Purchases</div> 
@@ -189,68 +210,74 @@ header {
     var SSS = SSS || {};
     SSS.Purchase = {};
     SSS.Product = {};
+    
 
     /*****************************************  Product Class ***********************/
     (function() {
-      var mProducts = [];
+      let self = this;
+      self.mProducts = [];
 
       this.Add = function(newProduct) {
-        mProducts.push(newProduct);
+        self.mProducts.push(newProduct);
       };
 
       this.Remove = function(newProduct) {
-        mProducts.push(newProduct);
+        self.mProducts.push(newProduct);
       };
       
       this.Products = function() {
-        return mProducts;
+        return self.mProducts;
       };
 
       this.GetProductByID = function(ProductID) {
-        var res = mProducts.find(element => {
+        var res = self.mProducts.find(element => {
           if (element.ProductID==ProductID) return element;
         });
         return res;
       };
 
-      function init(){
-        $.getJSON("api/products", null, function (data) {
-          mProducts = data.data;
+      this.init = function init(){
+        $.getJSON("api/products?brk=" + (new Date()).getTime(), null, function (data) {
+          console.log('product init', data);
+          self.mProducts = data.data;
             //******** Testing
-            SSS.Product.Add({ ProductID: 3, Title: "Water3", Count: 1, Cost: 3.00});
+            self.Add({ ProductID: 3, Title: "Water3", Count: 1, Cost: 3.00});
             RefreshProductRows();
-            SSS.Purchase.init();
+           // setTimeout(() => {
+           SSS.Purchase.init();
+           // }, 500); 
+
          });
-
-        
       }
-
-      init();
-
     }).apply(SSS.Product);
 
     /*****************************************  Purchase Class ***********************/
     (function() {
-      var mPurchases = [];
-      var self = this;
+      let self = this;
+      self.mPurchases = [];
 
       this.Add = function(newPurchase) {
 
         var prod =  SSS.Product.GetProductByID(newPurchase.ProductID);
+        console.log('GetProductByID', prod);
         newPurchase.UnitCount = prod.Count;
         newPurchase.UnitCost = prod.Cost;
         newPurchase.Cost = new Intl.NumberFormat('en-US', { style:'currency', currency: 'USD'}).format(newPurchase.Count * prod.Cost);
         newPurchase.Title = prod.Title;
-        mPurchases.push(newPurchase);
+        newPurchase.PurchaseDate = new Date(newPurchase.PurchaseDate);
+                
+        console.log('newpurchase', newPurchase);
+        self.mPurchases.push(newPurchase);
       };
       
 
       this.Purchases = function(newPurchase) {
-        return mPurchases;
+        return self.mPurchases;
       };
 
       this.init = function(){
-        $.getJSON("api/purchases", null, function (data) {
+        $.getJSON("api/purchases?brk=" + (new Date()).getTime(), null, function (data) {
+          console.log('purchase init', data);
 //          mPurchases = data.data;
             $.each(data.data, function (key, value) {
                 self.Add(value);
@@ -265,12 +292,15 @@ header {
                 
             });
             
-          RefreshPurchaseRows();
+ //         RefreshPurchaseRows();
+            document.getElementById("defaultOpen").click();
          });
       }
+      
     }).apply(SSS.Purchase);
 
- 
+
+    
 
     /*****************************************  Home Tab ***********************/
      $('#btnHomeAdd').click(function() {
@@ -280,15 +310,25 @@ header {
         alert("A Count of Items purchased is required");
         return;
       }
-      SSS.Purchase.Add({ ProductID: selProductId, Count: PurchaseCount});
+      var PurchaseDate = $('#txtHomeDate').val();
+      if (PurchaseDate==""){
+        alert("A Date of Items purchased is required");
+        return;
+      }
+
+      PurchaseDate=new Date(PurchaseDate);
+      SSS.Purchase.Add({ ProductID: selProductId, Count: PurchaseCount, PurchaseDate: PurchaseDate});
       RefreshPurchaseRows();
     });
 
     function RefreshPurchaseRows() {
+
+      $("#tblPurchaseData2").find("tr:gt(0)").remove();
       
+
       var rows = $("#tblPurchaseData > .row");
       for (i=0; i< rows.length;i++) {
-        if (i>0)//Skip title row
+       // if (i>0)//Skip title row
           rows[i].remove();  
       }
 
@@ -296,6 +336,14 @@ header {
       (vals).forEach(element => {
         var appendEl = $("<div class='row'></div>").appendTo("#tblPurchaseData");
         $("<div class='col-sm-2'>" + element.Title + "</div><div class='col-sm-2'>" + element.UnitCount + "</div><div class='col-sm-2'>" + element.UnitCost + "</div><div class='col-sm-2'>" + element.Count + "</div><div class='col-sm-2'>" + element.Cost + "</div>").appendTo(appendEl);  
+
+
+        //console.log('datetype', typeof(element.PurchaseDate));
+        var appendEl2 = $("<tr></tr>").appendTo("#tblPurchaseData2");
+        $("<td>" + element.Title + "</td><td>" + element.UnitCount + "</td><td>" + element.UnitCost + "</td><td>" + element.Count + "</td><td>" + element.Cost + "</td><td>" + element.PurchaseDate.toDateString() + "</td>").appendTo(appendEl2);  
+        
+
+
       });
       
 
@@ -362,7 +410,8 @@ header {
     }
 
     /*****************************************  Tabs ***********************/
-    function openTab(evt, cityName) {
+    function openTab(evt, tabName) {
+      console.log("Calling OPENTAB");
       var i, tabcontent, tablinks;
       tabcontent = document.getElementsByClassName("tabcontent");
       for (i = 0; i < tabcontent.length; i++) {
@@ -372,12 +421,29 @@ header {
       for (i = 0; i < tablinks.length; i++) {
         tablinks[i].className = tablinks[i].className.replace(" active", "");
       }
-      document.getElementById(cityName).style.display = "block";
+
+      if (tabName==null) return;
+      document.getElementById(tabName).style.display = "block";
       evt.currentTarget.className += " active";
+
+      console.log("cityname", tabName);
+      switch(tabName) {
+        case "Home":
+        RefreshPurchaseRows();
+        break;
+        case "Product":
+          RefreshProductRows();
+        break;
+      }
     }
 
+    (function() {
+    console.log("IIFE");
+      SSS.Product.init();
+      
     // Get the element with id="defaultOpen" and click on it
-    document.getElementById("defaultOpen").click();
+    //document.getElementById("defaultOpen").click();
+    })();
 </script>
    
 </body>
