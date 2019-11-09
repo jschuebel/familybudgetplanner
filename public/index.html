@@ -87,7 +87,7 @@ header {
 <body>
 	<header>
 		<p class="site-title"><IMG alt="Contact Us"  style="height:100px" src="images/logo.png"></p>
-		<p>Click on the buttons inside the tabbed menu:</p>
+		<p>Family Budge Planner - Charting, Forecasting examples discussions</p>
   </header>
   
 	<div id="body">
@@ -191,10 +191,47 @@ header {
         </div>
 </div>
 
-		<div id="Category" class="tabcontent">
-		<h3>Category</h3>
-		<p>Category is the capital of Japan.</p>
-		</div>
+<div id="Category" class="tabcontent">
+  <div class="container-fluid"> 
+    <div class="row" > 
+      <div class="col-sm-4">
+          <span style="font-size: 22px;">Category</span> 
+          <span style="font-size: 16px;">- Manage Product Categories</span> 
+      </div>
+  </div>
+  </div>
+  <div  style="background-color: lightgreen;"  class="container-fluid"> 
+        <div class="row"> 
+            <div class="col-sm-2">Title</div> 
+            <div class="col-sm-2"><INPUT id='txtAddCategoryTitle' /></div> 
+        </div>
+        <div class="row"> 
+            <div class="col-sm-3"><INPUT id='btnAddCategory' type=button value='Add' /></div> 
+        </div>
+    </div>
+
+    <div style="background-color: darkgray;"  class="container-fluid"> 
+        <div class="row"> 
+              <div  class="col-sm-3 offset-sm-1"><SELECT id='selCatProducts' ></SELECT></div> 
+        </div>
+        <div class="row"> 
+          <div   class="col-sm-1"><SELECT size="5" id='selCatAll' ></SELECT></div>
+          <div class="col-sm-1">
+              <div class="row"> 
+                  <div class="col-sm-1">
+                  <INPUT id='btnHomeAdd' type=button value='>>' />
+                  </div>
+              </div> 
+              <div class="row">
+                  <div class="col-sm-1">
+                  <INPUT id='btnHomeAdd' type=button value='<<' />
+                  </div>
+              </div>
+          </div>
+          <div class="col-sm-1"><SELECT size="5" id='selCatSelected' ></SELECT></div>
+        </div>  
+      </div>
+  	</div>
 </div>
 <footer>
 		<div class="container">
@@ -210,6 +247,7 @@ header {
     var SSS = SSS || {};
     SSS.Purchase = {};
     SSS.Product = {};
+    SSS.Category = {};
     
 
     /*****************************************  Product Class ***********************/
@@ -271,7 +309,7 @@ header {
       };
       
 
-      this.Purchases = function(newPurchase) {
+      this.Purchases = function() {
         return self.mPurchases;
       };
 
@@ -289,7 +327,6 @@ header {
                       .text(value.Address1)
                 );
 */                
-                
             });
             
  //         RefreshPurchaseRows();
@@ -300,6 +337,49 @@ header {
     }).apply(SSS.Purchase);
 
 
+    /*****************************************  mCategory Class ***********************/
+    (function() {
+      let self = this;
+      self.mCategories = [];
+      self.mCategoriesXref = [];
+
+      this.Add = function(newPurchase) {
+        self.mCategories.push(newPurchase);
+      };
+      
+
+      this.Categories = function() {
+        return self.mCategories;
+      };
+
+      this.GetCategoryByProductID = function(ProductID) {
+        let selProductList = [];
+        (self.mCategoriesXref).forEach(element => {
+          if (element.ProductID==ProductID) {
+            let cat =  self.mCategories.find(function(cat) {
+              return cat.CategoryID==element.CategoryID;
+            });
+            selProductList.push(cat);
+          }
+        });
+        return selProductList;
+      };
+
+      function init(){
+        $.getJSON("api/categories?brk=" + (new Date()).getTime(), null, function (data) {
+          console.log('Categories init', data);
+          self.mCategories = data.data;
+          //RefreshCategoryRows();
+         });
+         $.getJSON("api/categoryxref?brk=" + (new Date()).getTime(), null, function (data) {
+          console.log('Categories categoryxref init', data);
+          self.mCategoriesXref = data.data;
+         });
+         
+
+      }
+      init();
+    }).apply(SSS.Category);
     
 
     /*****************************************  Home Tab ***********************/
@@ -395,6 +475,15 @@ header {
         $("#selHomeProducts").append(new Option(txt, element.ProductID));
       });
 
+      //******** Refresh Category select      
+      $("#selCatProducts").empty();
+      $("#selCatProducts").append(new Option("Select Product", "-1"));
+      var vals = SSS.Product.Products();
+      (vals).forEach(element => {
+        $("#selCatProducts").append(new Option(element.Title, element.ProductID));
+      });
+      
+
       //******** Refresh Product grid
       var rows = $("#tblProductData > .row");
       for (i=0; i< rows.length;i++) {
@@ -407,6 +496,40 @@ header {
       });
 
 
+    }
+
+    /*****************************************  Category Tab ***********************/
+    $('#selCatProducts').change(function() {
+      var selProductId = $('#selCatProducts').val();
+      if (selProductId=="-1") return;
+
+      $("#selCatAll").empty();
+      $("#selCatSelected").empty();
+      
+      let all = SSS.Category.Categories();
+      let selected = SSS.Category.GetCategoryByProductID(selProductId);
+      (all).forEach(element => {
+        let cat =  selected.find(function(cat) {
+              return cat.CategoryID==element.CategoryID;
+            });
+        if (cat==null)
+          $("#selCatAll").append(new Option(element.Title, element.CategoryID));
+      });
+
+      (selected).forEach(element => {
+        $("#selCatSelected").append(new Option(element.Title, element.CategoryID));
+      });
+
+
+    });
+
+    function RefreshCategoryRows() {
+      //******** Refresh Home select      
+      $("#selCatAll").empty();
+      var vals = SSS.Category.Categories();
+      (vals).forEach(element => {
+        $("#selCatAll").append(new Option(element.Title, element.CategoryID));
+      });
     }
 
     /*****************************************  Tabs ***********************/

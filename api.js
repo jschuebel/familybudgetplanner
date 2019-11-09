@@ -38,28 +38,18 @@ router.get('/purchases', (req, res) => {
 
 });
 router.get('/categories', (req, res) => {
-	let rawdata = fs.readFileSync('Data/Categories.json');
-	response.data = JSON.parse(data);
-	res.json(response);
-	/*
 	fs.readFile('Data/Categories.json', (err, data) => {
 		if (err) throw err;
 		response.data = JSON.parse(data);
 		res.json(response);
 	});
-*/
 });
 router.get('/categoryxref', (req, res) => {
-	let rawdata = fs.readFileSync('Data/CategoryXref.json');
-	response.data = JSON.parse(data);
-	res.json(response);
-	/*
 	fs.readFile('Data/CategoryXref.json', (err, data) => {
 		if (err) throw err;
 		response.data = JSON.parse(data);
 		res.json(response);
 	});
-*/	
 });
 
 
