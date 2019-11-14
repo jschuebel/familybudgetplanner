@@ -173,7 +173,8 @@ header {
           </div>
         
         <div  style="background-color: lightgreen;"  class="container-fluid"> 
-            <div class="row"> 
+          <div class="row"><div class="col-sm-1">&nbsp;</div></div>
+          <div class="row"> 
                 <div class="col-sm-2">Title</div> 
                 <div class="col-sm-2"><INPUT id='txtAddTitle' name='txtAddTitle' /></div> 
             </div>
@@ -185,9 +186,13 @@ header {
                 <div class="col-sm-2">Cost</div> 
                 <div class="col-sm-2"><INPUT id='txtAddCost' name='txtAddCost' /></div> 
             </div>
+            <div class="row"><div class="col-sm-1">&nbsp;</div></div>
             <div class="row"> 
-                <div class="col-sm-3"><INPUT id='btnAddProduct' type=button value='Add' /></div> 
-            </div>
+                <div class="col-sm-1"><button class="btn btn-primary" id='btnAddProduct' >Add</button></div> 
+                <div class="col-sm-1"><button class="btn btn-primary" id='btnClearProduct' >Clear</button></div> 
+                <div class="col-sm-1"><button class="btn btn-primary" disabled id='btnUpdateProduct' >Update</button></div> 
+                <div class="col-sm-1"><button class="btn btn-primary" disabled id='btnDelProduct' >Del</button></div> 
+             </div>
         </div>
         <div  style="background-color: orangered;"  class="container-fluid"> 
             <div class="row"> 
@@ -204,69 +209,71 @@ header {
         </div>            
         <div  style="background-color: orangered;"  class="container-fluid"> 
             <div class="row"> 
-            <div class="col-sm-3"><INPUT id='btnRemoveProduct' type=button value='Del' /></div> 
+            <div class="col-sm-3">paging</div> 
           </div>
         </div>
-</div>
-
-<div id="Category" class="tabcontent">
-  <div class="container-fluid"> 
-    <div class="row" > 
-      <div class="col-sm-4">
-          <span style="font-size: 22px;">Category</span> 
-          <span style="font-size: 16px;">- Manage Product Categories</span> 
-      </div>
     </div>
-  </div>
-  <div  style="background-color: lightgreen;"  class="container-fluid"> 
+
+    <div id="Category" class="tabcontent">
+      <div class="container-fluid"> 
+        <div class="row" > 
+          <div class="col-sm-4">
+              <span style="font-size: 22px;">Category</span> 
+              <span style="font-size: 16px;">- Manage Product Categories</span> 
+          </div>
+        </div>
+      </div>
+      <div  style="background-color: lightgreen;"  class="container-fluid"> 
+        <div class="row"><div class="col-sm-1">&nbsp;</div></div>
         <div class="row"> 
             <div class="col-sm-1">Title</div> 
             <div class="col-sm-2"><INPUT id='txtAddCategoryTitle' /></div> 
         </div>
+        <div class="row"><div class="col-sm-1">&nbsp;</div></div>
         <div class="row"> 
             <div class="col-sm-1"><button class="btn btn-primary" id='btnAddCategory' >Add</button></div> 
-            <div class="col-sm-1"><button class="btn btn-primary" disabled id='btnDelCategory' >Del</button></div> 
+            <div class="col-sm-1"><button class="btn btn-primary" id='btnClearCategory' >Clear</button></div> 
             <div class="col-sm-1"><button class="btn btn-primary" disabled id='btnUpdateCategory' >Update</button></div> 
+            <div class="col-sm-1"><button class="btn btn-primary" disabled id='btnDelCategory' >Del</button></div> 
         </div>
-  </div>
-  <table id="tblCategoryData" class="table table-responsive table-striped table-hover table-condensed">
-      <tr  style="background-color: orangered;">
+      </div>
+      <table id="tblCategoryData" class="table table-responsive table-striped table-hover table-condensed" style="width: 100%;">
+        <tr  style="background-color: orangered;">
           <th>ID</th>
           <th>Title</th>
         </tr>
-    </table>
+      </table>
+      </div>            
+    </div>
 
-  </div>            
-
-</div>
-<div id="CategoryProduct" class="tabcontent">
-    <div class="container-fluid"> 
-      <div class="row" > 
-        <div class="col-sm-4">
-            <span style="font-size: 22px;">Product Category</span> 
-            <span style="font-size: 16px;">- Manage Product Categories</span> 
+    <div id="CategoryProduct" class="tabcontent">
+      <div class="container-fluid"> 
+        <div class="row" > 
+          <div class="col-sm-4">
+              <span style="font-size: 22px;">Product Category</span> 
+              <span style="font-size: 16px;">- Manage Product Categories</span> 
+          </div>
         </div>
       </div>
-    </div>
-    <div style="background-color: darkgray;"  class="container-fluid"> 
+      <div style="background-color: lightgreen;"  class="container-fluid"> 
         <div class="row"> 
-              <div  class="col-sm-3 offset-sm-1"><SELECT id='selCatProducts' ></SELECT></div> 
+              <div  class="col-sm-3"><SELECT class="form-control" id='selCatProducts' ></SELECT></div> 
         </div>
         <div class="row"> 
-          <div   class="col-sm-1"><SELECT size="5" id='selCatAll' ></SELECT></div>
+          <div   class="col-sm-1"><SELECT class="form-control" size="5" id='selCatAll' ></SELECT></div>
           <div class="col-sm-1">
               <div class="row"> 
                   <div class="col-sm-1">
-                  <INPUT id='btnHomeAdd' type=button value='>>' />
+                  <button id='btnHomeAdd' class="btn btn-primary float-left" >&gt;&gt;</button>
                   </div>
               </div> 
               <div class="row">
                   <div class="col-sm-1">
-                  <INPUT id='btnHomeAdd' type=button value='<<' />
+                    <button id='btnHomeAdd' class="btn btn-primary" >&lt;&lt;</button>
                   </div>
               </div>
           </div>
-          <div class="col-sm-1"><SELECT size="5" id='selCatSelected' ></SELECT></div>
+          <div class="col-sm-1"><SELECT class="form-control" size="5" id='selCatSelected' ></SELECT></div>
         </div>  
       </div>
   </div>
@@ -605,7 +612,6 @@ header {
         return;
       }
 
-      $('#btnDelCategory').prop('disabled', false);
     });
     $('#btnDelCategory').click(function() {
       alert("Category delete");
@@ -613,6 +619,15 @@ header {
     $('#btnUpdateCategory').click(function() {
       alert("Category update");
     });
+
+    $('#btnClearCategory').click(function() {
+      $('#btnAddCategory').prop('disabled', false);
+        $('#btnDelCategory').prop('disabled', true);
+        $('#btnUpdateCategory').prop('disabled', true);
+        $('#txtAddCategoryTitle').val('');
+    });
+
+    
 
     function RefreshCategoryRows() {
       //******** Refresh Home select      
@@ -627,8 +642,28 @@ header {
         //console.log('tblCategoryData element', element);
         var appendEl2 = $("<tr></tr>").appendTo("#tblCategoryData");
         $("<td>" + element.CategoryID + "</td><td>" + element.Title + "</td>").appendTo(appendEl2);  
-        
       });
+
+      $("#tblCategoryData").find("tr:gt(0)").click(function(event){
+        console.log("event",event.currentTarget);
+        let selectCatID = event.currentTarget.childNodes[0].innerText;
+        let selectCatTitle = event.currentTarget.childNodes[1].innerText;
+
+        var cats = SSS.Category.Categories();
+        let cat =  cats.find(function(cat) {
+              return cat.CategoryID==selectCatID;
+            });
+        if (cat==null) alert("problem finding Category=" + selectCatTitle);
+        //console.log("category found",cat);
+
+        
+        $('#btnAddCategory').prop('disabled', true);
+        $('#btnDelCategory').prop('disabled', false);
+        $('#btnUpdateCategory').prop('disabled', false);
+        $('#txtAddCategoryTitle').val(cat.Title);
+      });
+
+
     }
 
     /*****************************************  Product Category Tab ***********************/
@@ -690,9 +725,6 @@ header {
 
     (function() {
       //console.log("IIFE");
-      $("#tblCategoryData > tr").click(function(){
-        alert("Click!");
-      });
 
       SSS.Product.init();
       
