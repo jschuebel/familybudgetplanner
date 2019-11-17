@@ -336,6 +336,10 @@ header {
         case "Product":
           RefreshProductRows();
         break;
+        case "CategoryProduct":
+          $('#selCatProducts').val("-1");
+          RefreshProductCategories("-1");
+          break;
       }
     }
 

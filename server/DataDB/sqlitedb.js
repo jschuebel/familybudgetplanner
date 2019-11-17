@@ -177,10 +177,10 @@ ReadCategories() {
                     return;
                 }
                 if (rows.length===0) console.log('*********** No CategoryXrefs');
+                this.closedb(db);
                 resolve(rows);
             });
-            this.closedb(db);
-            });
+           });
         });
     }
 
@@ -195,10 +195,14 @@ ReadCategories() {
                 if (err){
                     console.log('CategoryXrefs insert err');
                     console.log(err);
+                    this.closedb(db);
                     reject(err);
                 }
-                else
-                    resolve(true);
+                else {
+                    this.closedb(db);
+                    let retVal={ status:`Category added.`, wasSuccessful:true};
+                    resolve(retVal);
+                }
 //                    console.log('CategoryXrefs insert no error');
                 });
             });
@@ -209,18 +213,17 @@ ReadCategories() {
         return new Promise((resolve, reject) => {
             this.opendb().then(db => {
 
-                db.run('delete from CategoryXrefs WHERE CategoryID=?',[ProductID
+                db.run('delete from CategoryXrefs WHERE ProductID=?',[ProductID
                 ],(err) => {
                 if (err){
-                    console.log('Category delete err');
-                    console.log(err);
+                    console.log('DeleteCategoryXrefByProduct delete err', err);
                     this.closedb(db);
                     let retVal={ status:err, wasSuccessful:false};
                     reject(retVal);
                 }
                 else
                     this.closedb(db);
-                    let retVal={ status:`Category deleted.`, wasSuccessful:true};
+                    let retVal={ status:`CategoryXref deleted.`, wasSuccessful:true};
                     resolve(retVal);
 //                    console.log('CategoryXrefs insert no error');
                 });

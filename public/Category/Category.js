@@ -35,7 +35,8 @@ SSS.Category = {};
           let cat =  self.mCategories.find(function(cat) {
             return cat.CategoryID==element.CategoryID;
           });
-          selProductList.push(cat);
+          if (cat!=null)
+            selProductList.push(cat);
         }
       });
       return selProductList;
@@ -132,9 +133,9 @@ SSS.Category = {};
           dataType: 'json',
           type: 'PUT',
           success: function(response) {
-            self.LoadCategoryXref().then((result) => {
-                console.log("LoadCategoryXref from SaveCategoryXref result",result);
-                self.mCategories = result.data;
+            self.LoadCategoryXref().then((loadXrefResult) => {
+                console.log("LoadCategoryXref from SaveCategoryXref results",loadXrefResult);
+                self.mCategoriesXref = loadXrefResult.data;
                 resolve(response.data);
             });
           },

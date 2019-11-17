@@ -9,7 +9,7 @@ var port = process.env.PORT || settings.defaultPort;
 var app = express();
 
 // API file for interacting with MongoDB
-const api = require('server/api');
+const api = require('./server/api');
 
 //middleware. use the body-parse before the request is handled.
 app.use(function (req,res,next) {

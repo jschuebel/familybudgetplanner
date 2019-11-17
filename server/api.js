@@ -3,7 +3,7 @@ const router = express.Router();
 
 //const FileDB = require('./DataBB/FileDB');
 //const db = new FileDB();
-const SQLiteDB = require('./DataBB/sqlitedb');
+const SQLiteDB = require('./DataDB/sqlitedb');
 const db = new SQLiteDB();
 
 // Response handling
@@ -91,6 +91,7 @@ router.put('/category', (req, res) => {
 	});
 });
 
+///TODO must delete all xrefs with this categoryid
 router.delete('/category/:id', (req, res) => {
 	console.log("req.body",req.body);    //body to json from a post
 	console.log("req.query", req.query);
@@ -132,15 +133,16 @@ router.put('/categoryxref', (req, res) => {
     console.log("req.query", req.query);
 
 	var newXref = JSON.parse(JSON.stringify(req.body));
-    console.log("categoryxref newxref:",newXref);
+    console.log("categoryxref put newxref:",newXref);
 
 
 	db.DeleteCategoryXrefByProduct(newXref.ProductID).then(data => {
 		if (data.wasSuccessful) {
+			console.log('Categoryxref deleted for ProductID', newXref.ProductID);
 			newXref.Categories.forEach((row) => {
-				console.log("row",row);
+				console.log("xref add catid",row);
 				db.AddCategoryXref({ProductID: newXref.ProductID,CategoryID:row}).then(data => {
-					console.log('CategoryID:row saved', row);
+					console.log('CategoryID:row insert catid', row);
 				})
 				.catch(error => {
 				console.log(error);

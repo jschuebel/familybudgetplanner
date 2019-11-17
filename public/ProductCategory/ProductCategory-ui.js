@@ -1,9 +1,11 @@
 function RefreshProductCategories(selProductId) {
     $("#selCatAll").empty();
     $("#selCatSelected").empty();
-    
+    console.log('RefreshProductCategories selProductId', selProductId)
     let all = SSS.Category.Categories();
+    console.log('RefreshProductCategories all', all);
     let selected = SSS.Category.GetCategoryByProductID(selProductId);
+    console.log('RefreshProductCategories selected', selected);
     (all).forEach(element => {
       let cat =  selected.find(function(cat) {
             return cat.CategoryID==element.CategoryID;
@@ -68,10 +70,8 @@ function RefreshProductCategories(selProductId) {
     });
     console.log('selCatSelected', selCatSelected)
 
-    $('#btnUpdateCategoryXref').prop('disabled', true);
     SSS.Category.SaveCategoryXref(selProductId, selCatSelected).then(data=>  
     { 
-      $('#selCatProducts').val('-1');
       RefreshProductCategories(selProductId);
       alert(data.status);
     });
