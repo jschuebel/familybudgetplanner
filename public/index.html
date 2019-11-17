@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -83,6 +85,11 @@ header {
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1e5799', endColorstr='#7db9e8',GradientType=0 ); /* IE6-9 */
 }
 </style>
+
+<script src="Category/Category.js"></script>
+<script src="Purchase/Purchase.js"></script>
+<script src="Product/Product.js"></script>
+
 </head>
 <body>
 	<header>
@@ -260,21 +267,27 @@ header {
               <div  class="col-sm-3"><SELECT class="form-control" id='selCatProducts' ></SELECT></div> 
         </div>
         <div class="row"> 
-          <div   class="col-sm-1"><SELECT class="form-control" size="5" id='selCatAll' ></SELECT></div>
+          <div   class="col-sm-1"><SELECT class="form-control" size="5" id='selCatAll' multiple=true ></SELECT></div>
           <div class="col-sm-1">
               <div class="row"> 
                   <div class="col-sm-1">
-                  <button id='btnHomeAdd' class="btn btn-primary float-left" >&gt;&gt;</button>
+                  <button id='btnCatProdMoveRight' class="btn btn-primary float-left" >&gt;&gt;</button>
                   </div>
               </div> 
               <div class="row">
                   <div class="col-sm-1">
-                    <button id='btnHomeAdd' class="btn btn-primary" >&lt;&lt;</button>
+                    <button id='btnCatProdMoveLeft' class="btn btn-primary" >&lt;&lt;</button>
                   </div>
               </div>
           </div>
-          <div class="col-sm-1"><SELECT class="form-control" size="5" id='selCatSelected' ></SELECT></div>
+          <div class="col-sm-1"><SELECT class="form-control" size="5" id='selCatSelected' multiple=true ></SELECT></div>
         </div>  
+        <div class="row"><div class="col-sm-1">&nbsp;</div></div>
+        <div class="row"> 
+            <div class="col-sm-3 offset-sm-1"><button class="btn btn-primary" disabled id='btnUpdateCategoryXref' >Update</button></div> 
+        </div>
+
+
       </div>
   </div>
 
@@ -288,409 +301,16 @@ header {
 		  </div>
 </footer>
 
+<script src="Category/Category-ui.js"></script>
+<script src="Purchase/Purchase-ui.js"></script>
+<script src="Product/Product-ui.js"></script>
+<script src="ProductCategory/ProductCategory-ui.js"></script>
 
 <script>
-
-    var SSS = SSS || {};
-    SSS.Purchase = {};
-    SSS.Product = {};
-    SSS.Category = {};
-    
-
-    /*****************************************  Product Class ***********************/
-    (function() {
-      let self = this;
-      self.mProducts = [];
-
-      this.Add = function(newProduct) {
-        self.mProducts.push(newProduct);
-      };
-
-      this.Remove = function(newProduct) {
-        self.mProducts.push(newProduct);
-      };
-      
-      this.Products = function() {
-        return self.mProducts;
-      };
-
-      this.GetProductByID = function(ProductID) {
-        var res = self.mProducts.find(element => {
-          if (element.ProductID==ProductID) return element;
-        });
-        return res;
-      };
-
-      this.Save = function() {
-        return self.mProducts;
-      };
-
-      this.Load = function() {
-        return new Promise((resolve, reject) => {
-          $.getJSON("api/products?brk=" + (new Date()).getTime(), null, function (data) {
-            console.log('product load', data);
-            resolve(data.data);
-          })
-          .fail(function(jqXHR, textStatus, errorThrown) { alert('getJSON request failed! ' + textStatus); reject(textStatus)})
-        });
-      };
-
-      this.init = function init(){
-        self.Load().then(data => {
-          console.log('product init after promis data', data);
-          self.mProducts = data;
-              //******** Testing
-              self.Add({ ProductID: 3, Title: "Water3", Count: 1, Cost: 3.00});
-              RefreshProductRows();
-            // setTimeout(() => {
-            SSS.Purchase.init();
-            // }, 500); 
-        })
-        .catch(error => {
-          console.log(error);
-        });
-      }
-    }).apply(SSS.Product);
-
-    /*****************************************  Purchase Class ***********************/
-    (function() {
-      let self = this;
-      self.mPurchases = [];
-
-      this.Add = function(newPurchase) {
-        //console.log('Purchase Add');
-
-        var prod =  SSS.Product.GetProductByID(newPurchase.ProductID);
-        //console.log('Purchase Add GetProductByID', prod);
-        newPurchase.UnitCount = prod.Count;
-        newPurchase.UnitCost = prod.Cost;
-        newPurchase.Cost = new Intl.NumberFormat('en-US', { style:'currency', currency: 'USD'}).format(newPurchase.Count * prod.Cost);
-        newPurchase.Title = prod.Title;
-        newPurchase.PurchaseDate = new Date(newPurchase.PurchaseDate);
-                
-        //console.log('Purchase Add newpurchase', newPurchase);
-        self.mPurchases.push(newPurchase);
-      };
-      
-
-      this.Purchases = function() {
-        return self.mPurchases;
-      };
-
-      this.Save = function() {
-        return self.mProducts;
-      };
-
-      this.Load = function() {
-        return new Promise((resolve, reject) => {
-          $.getJSON("api/purchases?brk=" + (new Date()).getTime(), null, function (data) {
-            console.log('purchase init', data);
-            resolve(data.data);
-          })
-          .fail(function(jqXHR, textStatus, errorThrown) { alert('getJSON request failed! ' + textStatus); reject(textStatus)})
-        });
-      };
-
-      this.init = function(){
-        self.Load().then(data => {
-          console.log('purchase init after promis data', data);
-          $.each(data, function (key, value) {
-              self.Add(value);
-          });
-          document.getElementById("defaultOpen").click();
-         })
-         .catch(error => {
-          console.log(error);
-        });
-      }
-      
-    }).apply(SSS.Purchase);
-
-
-    /*****************************************  mCategory Class ***********************/
-    (function() {
-      let self = this;
-      self.mCategories = [];
-      self.mCategoriesXref = [];
-
-      this.Add = function(newPurchase) {
-        self.mCategories.push(newPurchase);
-      };
-      
-
-      this.Categories = function() {
-        return self.mCategories;
-      };
-
-      this.GetCategoryByProductID = function(ProductID) {
-        let selProductList = [];
-        (self.mCategoriesXref).forEach(element => {
-          if (element.ProductID==ProductID) {
-            let cat =  self.mCategories.find(function(cat) {
-              return cat.CategoryID==element.CategoryID;
-            });
-            selProductList.push(cat);
-          }
-        });
-        return selProductList;
-      };
-
-      this.Save = function() {
-        return self.mProducts;
-      };
-
-      this.LoadCategory = function() {
-        return new Promise((resolve, reject) => {
-          $.getJSON("api/categories?brk=" + (new Date()).getTime(), null, function (data) {
-          console.log('Categories init', data);
-            resolve({ type:1, data : data.data});
-          })
-          .fail(function(jqXHR, textStatus, errorThrown) { alert('getJSON request failed! ' + textStatus); reject(textStatus)})
-        });
-      };
-
-      this.LoadCategoryXref = function() {
-        return new Promise((resolve, reject) => {
-          $.getJSON("api/categoryxref?brk=" + (new Date()).getTime(), null, function (data) {
-            console.log('Categories categoryxref init', data);
-            resolve({ type:2, data : data.data});
-          })
-          .fail(function(jqXHR, textStatus, errorThrown) { alert('getJSON request failed! ' + textStatus); reject(textStatus)})
-        });
-      };
-
-      function init(){
-        console.log("Category init");
-        let promises = [];
-        promises.push(self.LoadCategory());
-        promises.push(self.LoadCategoryXref());
- 
-        Promise.all(promises).then((results) => {
-          //console.log("promisall results",results);
-          results.forEach((item) => {
-              //console.log("promisall item",item);
-              if (item.type===1){
-                //console.log('Categories category init', item.data);
-                self.mCategories = item.data;
-              }
-              if (item.type===2){
-                //console.log('Categories categoryxref init', item.data);
-                self.mCategoriesXref = item.data;
-                RefreshCategoryRows();
-            }
-          });
-
-        })
-        .catch(error => {
-          console.log(error);
-        });
-      }
-      init();
-    }).apply(SSS.Category);
-    
-
-    /*****************************************  Home Tab ***********************/
-     $('#btnHomeAdd').click(function() {
-      var selProductId = $('#selHomeProducts').val();
-      var PurchaseCount = $('#txtHomeCount').val();
-      if (PurchaseCount==""){
-        alert("A Count of Items purchased is required");
-        return;
-      }
-      var PurchaseDate = $('#txtHomeDate').val();
-      if (PurchaseDate==""){
-        alert("A Date of Items purchased is required");
-        return;
-      }
-
-      PurchaseDate=new Date(PurchaseDate);
-      SSS.Purchase.Add({ ProductID: selProductId, Count: PurchaseCount, PurchaseDate: PurchaseDate});
-      RefreshPurchaseRows();
-    });
-
-    function RefreshPurchaseRows() {
-
-      $("#tblPurchaseData2").find("tr:gt(0)").remove();
-      
-
-      var rows = $("#tblPurchaseData > .row");
-      for (i=0; i< rows.length;i++) {
-       // if (i>0)//Skip title row
-          rows[i].remove();  
-      }
-
-      var vals = SSS.Purchase.Purchases();
-      (vals).forEach(element => {
-        var appendEl = $("<div class='row'></div>").appendTo("#tblPurchaseData");
-        $("<div class='col-sm-2'>" + element.Title + "</div><div class='col-sm-2'>" + element.UnitCount + "</div><div class='col-sm-2'>" + element.UnitCost + "</div><div class='col-sm-2'>" + element.Count + "</div><div class='col-sm-2'>" + element.Cost + "</div>").appendTo(appendEl);  
-
-
-        //console.log('datetype', typeof(element.PurchaseDate));
-        var appendEl2 = $("<tr></tr>").appendTo("#tblPurchaseData2");
-        $("<td>" + element.Title + "</td><td>" + element.UnitCount + "</td><td>" + element.UnitCost + "</td><td>" + element.Count + "</td><td>" + element.Cost + "</td><td>" + element.PurchaseDate.toDateString() + "</td>").appendTo(appendEl2);  
-        
-
-
-      });
-      
-
+  
+    function formatMoney(val){
+      return new Intl.NumberFormat('en-US', { style:'currency', currency: 'USD'}).format(val);
     }
-
-    /*****************************************  Product Tab ***********************/
-    $('#btnAddProduct').click(function() {
-      var ProductTitle = $('#txtAddTitle').val();
-      var ProductCount = $('#txtAddCount').val();
-      var ProductCost = $('#txtAddCost').val();
-
-      if (ProductTitle==""){
-        alert("An Item Title is required");
-        return;
-      }
-
-      if (ProductCount==""){
-        alert("An Item Count is required");
-        return;
-      }
-      if (ProductCost==""){
-        alert("An Item Cost is required");
-        return;
-      }
-
-      var Prods = SSS.Product.Products();
-      var Idx = Prods.length + 1;
-      SSS.Product.Add({ ProductID: Idx, Title: ProductTitle, Count: ProductCount, Cost: ProductCost});
-      SSS.Product.Save();
-      RefreshProductRows();
-      $('#txtAddTitle').val('');
-      $('#txtAddCount').val('');
-      $('#txtAddCost').val('');
-    });
-
-    $('#btnRemoveProduct').click(function() {
-//      var ans = confirm("Are you sure you want to delete (" + $('#selProducts').text() + ")");
-//      if (ans===true){
-//          alert("deleting item id=" + $('#selProducts').val());
-      //TODO  SSS.Product.Remove();
-    });
-
-    function RefreshProductRows() {
-
-      //******** Refresh Home select      
-      $("#selHomeProducts").empty();
-      var vals = SSS.Product.Products();
-      (vals).forEach(element => {
-        var txt = element.Title + ".........." + element.Count + ".........." + element.Cost;
-        $("#selHomeProducts").append(new Option(txt, element.ProductID));
-      });
-
-      //******** Refresh Category select      
-      $("#selCatProducts").empty();
-      $("#selCatProducts").append(new Option("Select Product", "-1"));
-      var vals = SSS.Product.Products();
-      (vals).forEach(element => {
-        $("#selCatProducts").append(new Option(element.Title, element.ProductID));
-      });
-      
-
-      //******** Refresh Product grid
-      var rows = $("#tblProductData > .row");
-      for (i=0; i< rows.length;i++) {
-          rows[i].remove();  
-      }
-
-      (vals).forEach(element => {
-        var appendEl = $("<div class='row'></div>").appendTo("#tblProductData");
-        $("<div class='col-sm-2'>" + element.ProductID + "</div><div class='col-sm-2'>" + element.Title + "</div><div class='col-sm-2'>" + element.Count + "</div><div class='col-sm-2'>" + element.Cost + "</div>").appendTo(appendEl);  
-      });
-    }
-
-    /*****************************************  Category Tab ***********************/
-    $('#btnAddCategory').click(function() {
-      var AddCategoryTitle = $('#txtAddCategoryTitle').val();
-      if (AddCategoryTitle==""){
-        alert("Category Title is required");
-        return;
-      }
-
-    });
-    $('#btnDelCategory').click(function() {
-      alert("Category delete");
-    });
-    $('#btnUpdateCategory').click(function() {
-      alert("Category update");
-    });
-
-    $('#btnClearCategory').click(function() {
-      $('#btnAddCategory').prop('disabled', false);
-        $('#btnDelCategory').prop('disabled', true);
-        $('#btnUpdateCategory').prop('disabled', true);
-        $('#txtAddCategoryTitle').val('');
-    });
-
-    
-
-    function RefreshCategoryRows() {
-      //******** Refresh Home select      
-      $("#selCatAll").empty();
-      var vals = SSS.Category.Categories();
-      (vals).forEach(element => {
-        $("#selCatAll").append(new Option(element.Title, element.CategoryID));
-      });
-
-      $("#tblCategoryData").find("tr:gt(0)").remove();
-      (vals).forEach(element => {
-        //console.log('tblCategoryData element', element);
-        var appendEl2 = $("<tr></tr>").appendTo("#tblCategoryData");
-        $("<td>" + element.CategoryID + "</td><td>" + element.Title + "</td>").appendTo(appendEl2);  
-      });
-
-      $("#tblCategoryData").find("tr:gt(0)").click(function(event){
-        console.log("event",event.currentTarget);
-        let selectCatID = event.currentTarget.childNodes[0].innerText;
-        let selectCatTitle = event.currentTarget.childNodes[1].innerText;
-
-        var cats = SSS.Category.Categories();
-        let cat =  cats.find(function(cat) {
-              return cat.CategoryID==selectCatID;
-            });
-        if (cat==null) alert("problem finding Category=" + selectCatTitle);
-        //console.log("category found",cat);
-
-        
-        $('#btnAddCategory').prop('disabled', true);
-        $('#btnDelCategory').prop('disabled', false);
-        $('#btnUpdateCategory').prop('disabled', false);
-        $('#txtAddCategoryTitle').val(cat.Title);
-      });
-
-
-    }
-
-    /*****************************************  Product Category Tab ***********************/
-    $('#selCatProducts').change(function() {
-      var selProductId = $('#selCatProducts').val();
-      if (selProductId=="-1") return;
-
-      $("#selCatAll").empty();
-      $("#selCatSelected").empty();
-      
-      let all = SSS.Category.Categories();
-      let selected = SSS.Category.GetCategoryByProductID(selProductId);
-      (all).forEach(element => {
-        let cat =  selected.find(function(cat) {
-              return cat.CategoryID==element.CategoryID;
-            });
-        if (cat==null)
-          $("#selCatAll").append(new Option(element.Title, element.CategoryID));
-      });
-
-      (selected).forEach(element => {
-        $("#selCatSelected").append(new Option(element.Title, element.CategoryID));
-      });
-
-
-    });
-
 
     /*****************************************  Tabs ***********************/
     function openTab(evt, tabName) {
@@ -726,6 +346,10 @@ header {
     (function() {
       //console.log("IIFE");
 
+      //"".padright("00000")
+    String.prototype.padright = function(paddval) {
+      return String(this + paddval).substring(0,paddval.length);
+    }
       SSS.Product.init();
       
     // Get the element with id="defaultOpen" and click on it
