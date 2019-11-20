@@ -30,25 +30,105 @@ class SQLiteDB {
 /************************************************ Product *********************/
     ReadProducts() {
         return new Promise((resolve, reject) => {
-		this.opendb().then(db => {
-            db.all("select * from Products", [], (err, rows) => {
-                if (err) {
-                    this.closedb(db);
-                    reject(err);
-                    return;
-                }
-                if (rows.length===0) console.log('*********** No Products');
-                rows.forEach((row) => {
-                    if (row.Cost!=null)
-                        row.Cost = row.Cost/100;
-                //console.log(" - " + row.Title);
+            this.opendb().then(db => {
+                db.all("select * from Products", [], (err, rows) => {
+                    if (err) {
+                        this.closedb(db);
+                        reject(err);
+                        return;
+                    }
+                    if (rows.length===0) console.log('*********** No Products');
+                    rows.forEach((row) => {
+                        if (row.Cost!=null)
+                            row.Cost = row.Cost/100;
+                    //console.log(" - " + row.Title);
+                    });
+                    resolve(rows);
                 });
-                resolve(rows);
+                this.closedb(db);
             });
-            this.closedb(db);
         });
-    });
-}
+    }
+
+    AddProduct(Product) {
+        return new Promise((resolve, reject) => {
+            this.opendb().then(db => {
+                db.run('insert into Products values($pk,$title,$count,$cost)',{
+                    $pk:Product.ProductID,
+                    $title:Product.Title,
+                    $count:Product.Count,
+                    $cost:Product.Cost*100
+                },(err) => {
+                if (err){
+                    console.log('Product insert err',err);
+                    this.closedb(db);
+                    let retVal={ status:err, wasSuccessful:false};
+                    reject(retVal);
+                }
+                else
+                    this.closedb(db);
+                    let retVal={ status:'Product added.', wasSuccessful:true};
+                    resolve(retVal);
+    //                    console.log('CategoryXrefs insert no error');
+                });
+            });
+        });
+    }
+
+    SaveProduct(Product) {
+        return new Promise((resolve, reject) => {
+            this.opendb().then(db => {
+                //Products(ProductID INTEGER primary key autoincrement, Title text, Count int, Cost int)
+                db.run('update Products set Title=?,Count=?,Cost=? WHERE ProductID=?',[Product.Title
+                    ,Product.Count
+                    ,(Product.Cost*100)
+                    ,Product.ProductID
+                ],(err) => {
+                if (err){
+                    console.log('Product insert err');
+                    console.log(err);
+                    this.closedb(db);
+                    let retVal={ status:err, wasSuccessful:false};
+                    reject(retVal);
+                }
+                else {
+                    this.closedb(db);
+                    let retVal={ status:`Product ${Product.Title} saved.`, wasSuccessful:true};
+                    resolve(retVal);
+//                    console.log('Product insert no error');
+                }
+                });
+
+            });
+        });
+    }
+
+    DeleteProduct(ProductID) {
+        return new Promise((resolve, reject) => {
+            this.opendb().then(db => {
+
+                    /*!!!!!!! TODO must remove all CategoryXrefs for this product */
+
+                db.run('delete from Products WHERE ProductID=?',[ProductID
+                ],(err) => {
+                if (err){
+                    console.log('Product delete err');
+                    console.log(err);
+                    this.closedb(db);
+                    let retVal={ status:err, wasSuccessful:false};
+                    reject(retVal);
+                }
+                else
+                    this.closedb(db);
+                    let retVal={ status:`Product deleted.`, wasSuccessful:true};
+                    resolve(retVal);
+//                    console.log('CategoryXrefs insert no error');
+                });
+
+            });
+        });
+    }
+
 
 /************************************************ Purchase *********************/
 ReadPurchases() {

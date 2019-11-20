@@ -10,11 +10,49 @@ SSS.Product = {};
     self.mProducts = [];
 
     this.Add = function(newProduct) {
-      self.mProducts.push(newProduct);
+      console.log('***** ADD PRoduct ');
+      return new Promise((resolve, reject) => {
+        $.post("api/product",newProduct,
+          function(prodRespone, status){
+            console.log('Product save return ', prodRespone);
+            //alert("Data: " + data.result + "\nStatus: " + status);
+
+            self.Load().then((loadResult) => {
+                console.log("LoadProduct from Add result",loadResult);
+                self.mProducts = loadResult;
+                resolve(prodRespone.data);
+            });
+          });
+        });
+
     };
 
-    this.Remove = function(newProduct) {
-      self.mProducts.push(newProduct);
+    this.Delete = function() {
+      if (self.selectedProduct==null){
+        alert("Please select a Product");
+        return;
+      }
+      return new Promise((resolve, reject) => {
+      $.ajax({
+        url: "api/product/"+self.selectedProduct.ProductID,
+        type: 'DELETE',
+        success: function(apiResponse) {
+            self.selectedProduct=null;
+            if (apiResponse.data.wasSuccessful){
+              self.Load().then((loadResult) => {
+                console.log("LoadProduct from delete result",loadResult);
+                self.mProducts = loadResult;
+                resolve(apiResponse.data);
+            });
+            }
+            else
+              resolve(apiResponse.data);
+          },
+          error: function(request,msg,error) {
+            reject(error);
+          }
+        });
+      });
     };
     
     this.Products = function() {
@@ -28,8 +66,40 @@ SSS.Product = {};
       return res;
     };
 
-    this.Save = function() {
-      return self.mProducts;
+    this.GetSelectedProduct = function() {
+      return self.selectedProduct;
+    }
+
+    this.SetSelectedProduct = function(selProd) {
+      self.selectedProduct=selProd;
+    }
+
+
+
+    this.Save = function(updProduct) {
+      if (self.selectedProduct==null){
+        alert("Please select a Product");
+        return;
+      }
+      self.selectedProduct.Title=updProduct.Title;
+      self.selectedProduct.Count=updProduct.Count;
+      self.selectedProduct.Cost=updProduct.Cost;
+      return new Promise((resolve, reject) => {
+        $.ajax({
+          url: "api/product",
+          data: self.selectedProduct,
+          dataType: 'json',
+          type: 'PUT',
+          success: function(response) {
+            self.selectedProduct=null;
+            resolve(response.data);
+          },
+          error: function(request,msg,error) {
+            reject(error);
+          }
+        });
+        });
+
     };
 
     this.Load = function() {
@@ -46,8 +116,6 @@ SSS.Product = {};
       self.Load().then(data => {
         console.log('product init after promis data', data);
         self.mProducts = data;
-            //******** Testing
-            self.Add({ ProductID: 3, Title: "Water3", Count: 1, Cost: 3.00});
             RefreshProductRows();
           // setTimeout(() => {
           SSS.Purchase.init();

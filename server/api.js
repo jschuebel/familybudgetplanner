@@ -14,18 +14,82 @@ let response = {
 };
 
 /************************************************ Product *********************/
-router.get('/product', (req, res) => {
-	db.ReadProducts().then(data => {
-		response.data = data;
+	router.get('/product', (req, res) => {
+		db.ReadProducts().then(data => {
+			response.data = data;
+			res.json(response);
+		})
+		.catch(error => {
+		console.log(error);
+		response.data = { status:error.status.message, wasSuccessful:false};
 		res.json(response);
-	})
-	.catch(error => {
-	  console.log(error);
-	  response.data = { status:error, wasSuccessful:false};
-	  res.json(response);
+		});
+	//	response.data = [{ ProductID: 1, Title: "Water", Count: 24, Cost: 1.99},{ ProductID: 2, Title: "Coffee Water", Count: 6, Cost: 2.99}];
 	});
-//	response.data = [{ ProductID: 1, Title: "Water", Count: 24, Cost: 1.99},{ ProductID: 2, Title: "Coffee Water", Count: 6, Cost: 2.99}];
-});
+
+	router.post('/product', (req, res) => {
+		console.log("req.body",req.body);    //body to json from a post
+		console.log("req.query", req.query);
+
+		var newProd = JSON.parse(JSON.stringify(req.body));
+		newProd.ProductID=null;
+		console.log("product post prod:",newProd);
+	
+		db.AddProduct(newProd).then(data => {
+			response.data = data;
+			res.json(response);
+		})
+		.catch(error => {
+		console.log(error);
+		response.data = { status:error.status.message, wasSuccessful:false};
+		res.json(response);
+		});
+	});
+
+	router.put('/product', (req, res) => {
+		console.log("req.body",req.body);    //body to json from a post
+		console.log("req.query", req.query);
+	
+		var newprod = JSON.parse(JSON.stringify(req.body));
+		console.log("put product cat",newprod);
+	 
+		newprod.Count = parseInt(newprod.Count);
+		newprod.Cost = parseFloat(newprod.Cost);
+	  
+		db.SaveProduct(newprod).then(data => {
+			response.data = data;
+			res.json(response);
+		})
+		.catch(error => {
+		  console.log(error);
+		  response.data = { status:error.status.message, wasSuccessful:false};
+		  res.json(response);
+		});
+	});
+	
+	///TODO must delete all xrefs with this categoryid
+	router.delete('/product/:id', (req, res) => {
+		console.log("req.body",req.body);    //body to json from a post
+		console.log("req.query", req.query);
+		console.log("req.params.id", req.params.id)
+	
+		if (req.params == null || req.params.id==null)
+		{
+			response.data = { status:'ID is required', wasSuccessful:false};
+			res.json(response);
+			return;
+		} 
+		db.DeleteProduct(req.params.id).then(data => {
+			response.data = data;
+			res.json(response);
+		})
+		.catch(error => {
+		  console.log(error);
+		  response.data = { status:error.status.message, wasSuccessful:false};
+		  res.json(response);
+		});
+	});
+	
 
 /************************************************ Purchase *********************/
 router.get('/purchase', (req, res) => {
@@ -35,7 +99,7 @@ router.get('/purchase', (req, res) => {
 	})
 	.catch(error => {
 	  console.log(error);
-	  response.data = { status:error, wasSuccessful:false};
+	  response.data = { status:error.status.message, wasSuccessful:false};
 	  res.json(response);
 	});
 });
@@ -48,10 +112,11 @@ router.get('/category', (req, res) => {
 	})
 	.catch(error => {
 	  console.log(error);
-	  response.data = { status:error, wasSuccessful:false};
+	  response.data = { status:error.status.message, wasSuccessful:false};
 	  res.json(response);
 	});
 });
+
 router.post('/category', (req, res) => {
 	console.log("req.body",req.body);    //body to json from a post
     console.log("req.query", req.query);
@@ -66,7 +131,7 @@ router.post('/category', (req, res) => {
 	})
 	.catch(error => {
 	  console.log(error);
-	  response.data = { status:error, wasSuccessful:false};
+	  response.data = { status:error.status.message, wasSuccessful:false};
 	  res.json(response);
 	});
 });
@@ -86,7 +151,7 @@ router.put('/category', (req, res) => {
 	})
 	.catch(error => {
 	  console.log(error);
-	  response.data = { status:error, wasSuccessful:false};
+	  response.data = { status:error.status.message, wasSuccessful:false};
 	  res.json(response);
 	});
 });
@@ -109,7 +174,7 @@ router.delete('/category/:id', (req, res) => {
 	})
 	.catch(error => {
 	  console.log(error);
-	  response.data = { status:error, wasSuccessful:false};
+	  response.data = { status:error.status.message, wasSuccessful:false};
 	  res.json(response);
 	});
 });
@@ -122,7 +187,7 @@ router.get('/categoryxref', (req, res) => {
 	})
 	.catch(error => {
 	  console.log(error);
-	  response.data = { status:error, wasSuccessful:false};
+	  response.data = { status:error.status.message, wasSuccessful:false};
 	  res.json(response);
 	});
 });
@@ -158,7 +223,7 @@ router.put('/categoryxref', (req, res) => {
 	})
 	.catch(error => {
 	  console.log(error);
-	  response.data = { status:error, wasSuccessful:false};
+	  response.data = { status:error.status.message, wasSuccessful:false};
 	  res.json(response);
 	});
 });
