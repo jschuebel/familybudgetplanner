@@ -6,12 +6,29 @@ function RefreshProductCategories(selProductId) {
     console.log('RefreshProductCategories all', all);
     let selected = SSS.Category.GetCategoryByProductID(selProductId);
     console.log('RefreshProductCategories selected', selected);
+    var colcnt=0;
+    var rowcnt=1;
+    $("#divCatXrefs").empty();
+    var appendEl3 = $(`<div class="row" id='${rowcnt}'></div>`).appendTo("#divCatXrefs");
     (all).forEach(element => {
       let cat =  selected.find(function(cat) {
             return cat.CategoryID==element.CategoryID;
           });
-      if (cat==null)
+      if (cat==null) {
+        hldcheck="";
         $("#selCatAll").append(new Option(element.Title, element.CategoryID));
+      }
+      else {
+        hldcheck="checked";
+      }
+      if (colcnt>5) {
+          appendEl3 = $("<div class='row' ></div>").appendTo("#divCatXrefs");
+          rowcnt++;
+          colcnt=0;
+      }
+      $(`<div style='background-color: white;' class='col-sm-1'><label class='checkbox-inline'><input type='checkbox' name='catgroup' ${hldcheck} id='${element.CategoryID}' />${element.Title}</label></div></div>`).appendTo(appendEl3);  
+          colcnt++;
+
     });
 
     (selected).forEach(element => {
@@ -55,6 +72,10 @@ function RefreshProductCategories(selProductId) {
       $('#btnUpdateCategoryXref').prop('disabled', true);
       return;
     }
+    
+    var selcats = $("input[name='catgroup']:checked");
+    return;
+
 
     /*
     let selCatAll = [];

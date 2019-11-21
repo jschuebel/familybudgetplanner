@@ -103,6 +103,7 @@ header {
 		<button class="tablinks" onclick="openTab(event, 'Product')">Product</button>
 		<button class="tablinks" onclick="openTab(event, 'Category')">Category</button>
 		<button class="tablinks" onclick="openTab(event, 'CategoryProduct')">Product Category</button>
+		<button class="tablinks" onclick="openTab(event, 'Reports')">Reports</button>
 		</div>
 
 		<div id="Home" class="tabcontent">
@@ -146,8 +147,8 @@ header {
                 <div class="col-sm-1"><button class="btn btn-primary" disabled id='btnDelPurchase' >Del</button></div> 
             </div>  
         </div>
-
-        <table id="tblPurchaseData2" class="table table-responsive table-striped table-hover table-condensed">
+        <div class="table-responsive">
+        <table id="tblPurchaseData2" class="table table-striped table-hover table-condensed">
           <tr  style="background-color: orangered;">
               <th>Title</th>
               <th>Unit Count</th>
@@ -157,7 +158,7 @@ header {
               <th>Date</th>
             </tr>
         </table>
-  
+        </div>
 
         <!--div  style="background-color: orangered;"  class="container-fluid"> 
             <div class="row"> 
@@ -208,7 +209,9 @@ header {
                 <div class="col-sm-1"><button class="btn btn-primary" disabled id='btnDelProduct' >Del</button></div> 
              </div>
         </div>
-        <table id="tblProductData2" class="table table-responsive table-striped table-hover table-condensed">
+
+        <div class="table-responsive">
+        <table id="tblProductData2" class="table table-striped table-hover table-condensed">
           <tr  style="background-color: orangered;">
             <th>ID</th>
             <th>Title</th>
@@ -216,6 +219,7 @@ header {
             <th>Cost</th>
             </tr>
         </table>
+        </div>
 
 
         <!--div  style="background-color: orangered;"  class="container-fluid"> 
@@ -261,12 +265,16 @@ header {
             <div class="col-sm-1"><button class="btn btn-primary" disabled id='btnDelCategory' >Del</button></div> 
         </div>
       </div>
-      <table id="tblCategoryData" class="table table-responsive table-striped table-hover table-condensed" style="width: 100%;">
+
+      <div class="table-responsive">
+      <table id="tblCategoryData" class="table table-striped table-hover table-condensed" style="width: 100%;">
         <tr  style="background-color: orangered;">
           <th>ID</th>
           <th>Title</th>
         </tr>
       </table>
+      </div>            
+
       </div>            
     </div>
 
@@ -299,6 +307,10 @@ header {
           </div>
           <div class="col-sm-1"><SELECT class="form-control" size="5" id='selCatSelected' multiple=true ></SELECT></div>
         </div>  
+
+        <div id='divCatXrefs'>
+        </div>
+
         <div class="row"><div class="col-sm-1">&nbsp;</div></div>
         <div class="row"> 
             <div class="col-sm-3 offset-sm-1"><button class="btn btn-primary" disabled id='btnUpdateCategoryXref' >Update</button></div> 
@@ -306,6 +318,26 @@ header {
 
 
       </div>
+  </div>
+
+
+  
+  <div id="Reports" class="tabcontent">
+    <div class="container-fluid"> 
+      <div class="row" > 
+        <div class="col-sm-4">
+            <span style="font-size: 22px;">Reports</span> 
+            <span style="font-size: 16px;">- Manage Reports</span> 
+        </div>
+      </div>
+    </div>
+    <div style="background-color: lightgreen;"  class="container-fluid"> 
+      <div class="row"> 
+            <div  class="col-sm-3">
+              <canvas id="myCanvas" width="400" height="300" style="border: 1px solid #eee;"></canvas>
+            </div> 
+      </div>
+    </div>
   </div>
 
   </div>
@@ -373,6 +405,11 @@ header {
     }
       SSS.Product.init();
       
+      var canvas = document.getElementById("myCanvas");
+      var ctx = canvas.getContext("2d");
+      ctx.fillStyle = "#FFFFFF";
+      ctx.fillRect(0, 0, 400, 300);
+
     // Get the element with id="defaultOpen" and click on it
     //document.getElementById("defaultOpen").click();
     })();
