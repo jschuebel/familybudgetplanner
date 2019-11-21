@@ -104,6 +104,29 @@ router.get('/purchase', (req, res) => {
 	});
 });
 
+router.post('/purchase', (req, res) => {
+	console.log("req.body",req.body);    //body to json from a post
+	console.log("req.query", req.query);
+
+	var newPurchase = JSON.parse(JSON.stringify(req.body));
+	console.log("purchase post:",newPurchase);
+
+	newPurchase.PurchaseID=null;
+	newPurchase.Count = parseInt(newPurchase.Count);
+	newPurchase.CostOverride=newPurchase.CostOverride==""?null:parseFloat(newPurchase.CostOverride);
+
+	db.AddPurchase(newPurchase).then(data => {
+		response.data = data;
+		res.json(response);
+	})
+	.catch(error => {
+	console.log(error);
+	response.data = { status:error.status.message, wasSuccessful:false};
+	res.json(response);
+	});
+});
+
+
 /************************************************   Category *********************/
 router.get('/category', (req, res) => {
 	db.ReadCategories().then(data => {

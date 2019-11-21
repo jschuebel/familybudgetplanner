@@ -109,9 +109,12 @@ $('#btnAddProduct').click(function() {
 
     //******** Refresh Home select      
     $("#selHomeProducts").empty();
+    $("#selHomeProducts").append(new Option("............Select Product".padright("........................................."), '-1'));
+
+ 
     var vals = SSS.Product.Products();
     (vals).forEach(element => {
-      var txt = element.Title.padright("...............") + (element.Count + "").padright("...............") + (element.Cost==null?'$0.00':formatMoney(element.Cost));
+      var txt = element.Title.padright(".....................") + (element.Count + "").padright("...............") + (element.Cost==null?'$0.00':formatMoney(element.Cost));
       $("#selHomeProducts").append(new Option(txt, element.ProductID));
     });
 

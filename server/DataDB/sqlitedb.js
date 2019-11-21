@@ -153,6 +153,32 @@ ReadPurchases() {
     });
 }
 
+//Purchases(PurchaseID INTEGER primary key autoincrement,ProductID int, Count int, PurchaseDate text, CostOverride int)
+AddPurchase(Purchase) {
+    return new Promise((resolve, reject) => {
+        this.opendb().then(db => {
+            db.run('insert into Purchases values($pk,$fk, $count, $purchasedate, $costoverride)',{
+                $pk:Purchase.PurchaseID,
+                $fk:Purchase.ProductID,
+                $count:Purchase.Count,
+                $purchasedate:Purchase.PurchaseDate,
+                $costoverride:Purchase.CostOverride
+            },(err) => {
+            if (err){
+                console.log('Purchase insert err',err);
+                this.closedb(db);
+                let retVal={ status:err, wasSuccessful:false};
+                reject(retVal);
+            }
+            else
+                this.closedb(db);
+                let retVal={ status:'Purchase added.', wasSuccessful:true};
+                resolve(retVal);
+            });
+        });
+    });
+}
+
 /************************************************   Category *********************/
 ReadCategories() {  
         return new Promise((resolve, reject) => {

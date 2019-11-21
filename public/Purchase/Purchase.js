@@ -4,10 +4,29 @@ SSS.Purchase = {};
 (function() {
     let self = this;
     self.mPurchases = [];
+    self.selectedPurchase = null;
 
     this.Add = function(newPurchase) {
-      //console.log('Purchase Add');
+      console.log('***** ADD Purchase ');
+      return new Promise((resolve, reject) => {
+        $.post("api/purchase",newPurchase,
+          function(purchRespone, status){
+            console.log('Purchase save return ', purchRespone);
+            //alert("Data: " + data.result + "\nStatus: " + status);
+            self.mPurchases = [];
+            self.Load().then((loadResult) => {
+                console.log("LoadPurchase from Add result",loadResult);
+                $.each(loadResult, function (key, value) {
+                  self.AddPurchase(value);
+              });
+              resolve(purchRespone.data);
+            });
+          });
+        });
 
+    };
+
+    this.AddPurchase = function(newPurchase) {
       var prod =  SSS.Product.GetProductByID(newPurchase.ProductID);
       //console.log('Purchase Add GetProductByID', prod);
       newPurchase.UnitCount = prod.Count;
@@ -22,10 +41,19 @@ SSS.Purchase = {};
       newPurchase.Title = prod.Title;
       newPurchase.PurchaseDate = new Date(newPurchase.PurchaseDate);
               
-      //console.log('Purchase Add newpurchase', newPurchase);
+      console.log('Purchase Add newpurchase', newPurchase);
       self.mPurchases.push(newPurchase);
-    };
-    
+    }
+
+
+    this.GetSelectedPurchase = function() {
+      return self.selectedPurchase;
+    }
+
+    this.SetSelectedPurchase = function(selPurchase) {
+      self.selectedPurchase=selPurchase;
+    }
+
 
     this.Purchases = function() {
       return self.mPurchases;
@@ -48,8 +76,9 @@ SSS.Purchase = {};
     this.init = function(){
       self.Load().then(data => {
         console.log('purchase init after promis data', data);
+        self.mPurchases = [];
         $.each(data, function (key, value) {
-            self.Add(value);
+            self.AddPurchase(value);
         });
         document.getElementById("defaultOpen").click();
        })

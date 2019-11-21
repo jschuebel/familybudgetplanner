@@ -116,27 +116,34 @@ header {
       </div>
     
 
-        <div style="background-color: yellow;"  class="container-fluid"> 
+        <div style="background-color: lightgreen;"  class="container-fluid"> 
             <div class="row"> 
-                <div class="col-sm-3 offset-sm-1"><label class='monoselect'>Title........Count.........Cost</label></div> 
+                <div class="col-sm-4 offset-sm-2"><label class='monoselect'>Title.............Count.........Cost</label></div> 
             </div>
             <div class="row"> 
-                <div class="col-sm-1"><label class="label" >Product</label></div> 
+                <div class="col-sm-2"><label class="label" >Product</label></div> 
                 <div class="col-sm-3"><SELECT class='monoselect' id='selHomeProducts' name='selProcuts' ></SELECT></div> 
             </div>
             <div class="row"> 
-              <div class="col-sm-1"><label class="label" ># Bought</label></div> 
+              <div class="col-sm-2"><label class="label" ># Bought</label></div> 
               <div class="col-sm-2"><input id='txtHomeCount' type="text" class="form-control" /></div>
           </div>  
           <div class="row"> 
-            <div class="col-sm-1"><label class="label" >Date of Purchase</label></div> 
+            <div class="col-sm-2"><label class="label" >Cost Override</label></div> 
+            <div class="col-sm-2"><input id='txtHomeCostOverride' type="text" class="form-control" /></div>
+        </div>  
+        <div class="row"> 
+            <div class="col-sm-2"><label class="label" >Date of Purchase</label></div> 
             <div class="col-sm-2"><input id='txtHomeDate' type="date" class="form-control" /></div>
         </div>  
         <div class="row"> 
           <div class="col-sm-2"></div> 
       </div>  
       <div class="row"> 
-                <div class="col-sm-12 offset-sm-2"><INPUT id='btnHomeAdd' type=button value='Add Purchase' /></div> 
+                <div class="col-sm-1"><button class="btn btn-primary" id='btnAddPurchase' >Add</button></div> 
+                <div class="col-sm-1"><button class="btn btn-primary" id='btnClearPurchase' >Clear</button></div> 
+                <div class="col-sm-1"><button class="btn btn-primary" disabled id='btnUpdatePurchase' >Update</button></div> 
+                <div class="col-sm-1"><button class="btn btn-primary" disabled id='btnDelPurchase' >Del</button></div> 
             </div>  
         </div>
 
@@ -152,7 +159,7 @@ header {
         </table>
   
 
-        <div  style="background-color: orangered;"  class="container-fluid"> 
+        <!--div  style="background-color: orangered;"  class="container-fluid"> 
             <div class="row"> 
                 <div class="col-sm-12 offset-sm-2">Maintain Purchases</div> 
             </div>  
@@ -165,7 +172,7 @@ header {
             </div>
         </div>
         <div id="tblPurchaseData" style="background-color: white;"  class="container-fluid"> 
-         </div>
+         </div-->
 
   	</div>
 
