@@ -26,7 +26,7 @@ function RefreshProductCategories(selProductId) {
           rowcnt++;
           colcnt=0;
       }
-      $(`<div style='background-color: white;' class='col-sm-1'><label class='checkbox-inline'><input type='checkbox' name='catgroup' ${hldcheck} id='${element.CategoryID}' />${element.Title}</label></div></div>`).appendTo(appendEl3);  
+      $(`<div style='background-color: white;' class='col-sm-2'><label class='checkbox-inline'><input type='checkbox' name='catgroup' ${hldcheck} id='${element.CategoryID}' />${element.Title}</label></div></div>`).appendTo(appendEl3);  
           colcnt++;
 
     });

@@ -89,6 +89,7 @@ header {
 <script src="Category/Category.js"></script>
 <script src="Purchase/Purchase.js"></script>
 <script src="Product/Product.js"></script>
+<script src="Report/Report.js"></script>
 
 </head>
 <body>
@@ -334,7 +335,7 @@ header {
     <div style="background-color: lightgreen;"  class="container-fluid"> 
       <div class="row"> 
             <div  class="col-sm-3">
-              <canvas id="myCanvas" width="400" height="300" style="border: 1px solid #eee;"></canvas>
+              <canvas id="purchasesCanvas" width="650" height="450" style="background-color:white;border: 1px solid #eee;"></canvas>
             </div> 
       </div>
     </div>
@@ -354,6 +355,7 @@ header {
 <script src="Purchase/Purchase-ui.js"></script>
 <script src="Product/Product-ui.js"></script>
 <script src="ProductCategory/ProductCategory-ui.js"></script>
+<script src="Report/Report-ui.js"></script>
 
 <script>
   
@@ -389,6 +391,10 @@ header {
           $('#selCatProducts').val("-1");
           RefreshProductCategories("-1");
           break;
+        case "Reports":
+          SSS.Report.SetSelectedCategory({ CategoryID:1, Title:null});
+          SSS.Report.init();
+          break;
       }
     }
 
@@ -405,11 +411,6 @@ header {
     }
       SSS.Product.init();
       
-      var canvas = document.getElementById("myCanvas");
-      var ctx = canvas.getContext("2d");
-      ctx.fillStyle = "#FFFFFF";
-      ctx.fillRect(0, 0, 400, 300);
-
     // Get the element with id="defaultOpen" and click on it
     //document.getElementById("defaultOpen").click();
     })();

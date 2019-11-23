@@ -12,6 +12,45 @@ let response = {
     data: [],
     message: null
 };
+/************************************************ Report *********************/
+router.get('/report/:id', (req, res) => {
+	if (req.params == null || req.params.id==null)
+	{
+		response.data = { status:'ID is required', wasSuccessful:false};
+		res.json(response);
+		return;
+	} 
+
+	console.log("req.body",req.body);    //body to json from a post
+	console.log("req.query", req.query);
+	console.log("req.params.id", req.params.id)
+
+	var rpt = JSON.parse(JSON.stringify(req.query));
+	console.log("get report rpt",rpt);
+
+	//
+	if (req.params.id==1)
+	{
+		console.log("Purchase Report CategoryID", rpt.CategoryID)
+		db.RunPurchaseReport(rpt.CategoryID).then(data => {
+			response.data = data;
+			res.json(response);
+		})
+		.catch(error => {
+		console.log(error);
+		response.data = { status:error.status.message, wasSuccessful:false};
+		res.json(response);
+		});
+
+	}
+	else 	{
+	response.data = { status:'Unknow Report requested', wasSuccessful:false};
+	res.json(response);
+	return;
+	} 
+
+});
+
 
 /************************************************ Product *********************/
 	router.get('/product', (req, res) => {

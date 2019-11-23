@@ -26,7 +26,32 @@ class SQLiteDB {
             //console.log('Close the database connection.');
           });
     }
+
     
+/************************************************ Reports *********************/
+RunPurchaseReport(catid) {
+    return new Promise((resolve, reject) => {
+    this.opendb().then(db => {
+        db.all("select Products.Title, Purchases.Count, Purchases.PurchaseDate,(CASE WHEN Purchases.CostOverride IS NULL THEN Products.Cost * Purchases.Count ELSE Purchases.CostOverride END) Cost from Purchases inner join Products on Products.ProductID  = Purchases.ProductID inner join CategoryXrefs on CategoryXrefs.ProductID  = Products.ProductID where CategoryXrefs.CategoryID=? order by Purchases.PurchaseDate", [catid], (err, rows) => {
+            if (err) {
+                this.closedb(db);
+                reject(err);
+                return;
+            }
+            if (rows.length===0) console.log('*********** No Purchases');
+            rows.forEach((row) => {
+                if (row.Cost!=null)
+                    row.Cost = row.Cost/100;
+            //console.log(" - " + row.Title);
+            });
+            resolve(rows);
+        });
+        this.closedb(db);
+    });
+});
+}
+
+
 /************************************************ Product *********************/
     ReadProducts() {
         return new Promise((resolve, reject) => {
