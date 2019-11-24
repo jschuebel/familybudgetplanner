@@ -201,6 +201,9 @@ header {
             <div class="row"> 
                 <div class="col-sm-2">Cost</div> 
                 <div class="col-sm-2"><INPUT id='txtAddCost' name='txtAddCost' /></div> 
+                <div class="col-sm-2">
+                  <label class='checkbox-inline'><input type='checkbox' id='prodOverChk' />Has Override</label>
+                </div> 
             </div>
             <div class="row"><div class="col-sm-1">&nbsp;</div></div>
             <div class="row"> 
@@ -406,9 +409,16 @@ header {
       //console.log("IIFE");
 
       //"".padright("00000")
-    String.prototype.padright = function(paddval) {
-      return String(this + paddval).substring(0,paddval.length);
+      String.prototype.padright = function(paddval) {
+        return String(this + paddval).substring(0,paddval.length);
+      }
+
+      //"".padleft("00000")
+      String.prototype.padleft = function(paddval) {
+      return paddval.substring(0,paddval.length - this.length) + this;
     }
+
+
       SSS.Product.init();
       
     // Get the element with id="defaultOpen" and click on it

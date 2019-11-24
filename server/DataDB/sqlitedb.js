@@ -187,7 +187,7 @@ AddPurchase(Purchase) {
                 $fk:Purchase.ProductID,
                 $count:Purchase.Count,
                 $purchasedate:Purchase.PurchaseDate,
-                $costoverride:Purchase.CostOverride
+                $costoverride:Purchase.CostOverride*100
             },(err) => {
             if (err){
                 console.log('Purchase insert err',err);

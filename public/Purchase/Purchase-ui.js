@@ -14,7 +14,8 @@ $('#btnAddPurchase').click(function() {
     }
 
     var PurchaseCostOverride = $('#txtHomeCostOverride').val();
-    if (PurchaseDate=="") PurchaseCostOverride=null;
+    if (PurchaseCostOverride=="") PurchaseCostOverride=null;
+    
     var PurchaseDate = $('#txtHomeDate').val();
     if (PurchaseDate==""){
       alert("A Date of Items purchased is required");
@@ -67,7 +68,7 @@ $('#btnAddPurchase').click(function() {
       $("#tblPurchaseData2").find("tr:gt(0)").remove();
       (vals).forEach(element => {
         //console.log('datetype', typeof(element.PurchaseDate));
-        var appendEl2 = $(`<tr id='${element.ProductID}'></tr>`).appendTo("#tblPurchaseData2");
+        var appendEl2 = $(`<tr id='${element.PurchaseID}'></tr>`).appendTo("#tblPurchaseData2");
         $("<td>" + element.Title + "</td><td>" + element.UnitCount + "</td><td>" + formatMoney(element.UnitCost) + "</td><td>" + element.Count + "</td><td>" + element.Cost + "</td><td>" + element.PurchaseDate.toDateString() + "</td>").appendTo(appendEl2);  
       });
 
@@ -90,7 +91,8 @@ $('#btnAddPurchase').click(function() {
   
         //$('#selHomeProducts').val();
         $('#txtHomeCount').val(purchase.Count);
-        $('#txtHomeDate').val(purchase.PurchaseDate.getFullYear() + "-" + purchase.PurchaseDate.getMonth() + "-" + purchase.PurchaseDate.getDate());
+        let mth = "" + (purchase.PurchaseDate.getMonth()+1);
+        $('#txtHomeDate').val(purchase.PurchaseDate.getFullYear() + "-" + mth.padleft("00") + "-" +  ("" + purchase.PurchaseDate.getDate()).padleft("00"));
         $('#selHomeProducts').val(purchase.ProductID);
         $('#txtHomeCostOverride').val(purchase.CostOverride==null?'':purchase.CostOverride);
         

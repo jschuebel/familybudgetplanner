@@ -74,11 +74,14 @@ $('#btnAddProduct').click(function() {
       return;
     }
 
-    if (ProductCost==""){
-      alert("An Item Cost is required");
-      return;
-    }
 
+    let isChecked = $('#prodOverChk').prop('checked');
+    if (!isChecked) {
+      if (ProductCost==""){
+        alert("An Item Cost is required");
+        return;
+      }
+    }
     SSS.Product.Save({Title: ProductTitle, Count: ProductCount, Cost: ProductCost}).then(data=>  
     { 
       $('#txtAddTitle').val('');
@@ -134,6 +137,24 @@ $('#btnAddProduct').click(function() {
       $("<td>" + element.ProductID + "</td><td>" + element.Title + "</td><td>" + element.Count + "</td><td>" + formatMoney(element.Cost) + "</td>").appendTo(appendEl2);  
     });
 
+    $("#prodOverChk").change(function() {
+      let prod = SSS.Product.GetSelectedProduct();
+      if (prod==null) {
+        alert("problem finding Product=" + selectProdTitle);
+        return;
+      }
+
+      if(this.checked) {
+         prod.Cost=null;
+         $('#txtAddCost').val('');
+         $('#txtAddCost').prop('disabled', true);
+      }
+      else {
+        prod.Cost=null;
+        $('#txtAddCost').prop('disabled', false);
+     }
+  });
+
     //******** Product grid ROW CLICK
     $("#tblProductData2").find("tr:gt(0)").click(function(event){
       console.log("event",event.currentTarget);
@@ -145,13 +166,21 @@ $('#btnAddProduct').click(function() {
       let prod =  prods.find(function(prod) {
             return prod.ProductID==selectProdID;
           });
-      if (prod==null) alert("problem finding Product=" + selectProdTitle);
+      if (prod==null) {
+        alert("problem finding Product=" + selectProdTitle);
+        return;
+      }
       //console.log("category found",cat);
       SSS.Product.SetSelectedProduct(prod);
 
       $('#txtAddTitle').val(prod.Title);
       $('#txtAddCount').val(prod.Count);
       $('#txtAddCost').val(prod.Cost);
+
+      if (prod.Cost==null)
+        $('#prodOverChk').prop('checked', true);
+      else 
+        $('#prodOverChk').prop('checked', false);
   
       
       $('#btnAddProduct').prop('disabled', true);

@@ -73,8 +73,8 @@ function RefreshProductCategories(selProductId) {
       return;
     }
     
-    var selcats = $("input[name='catgroup']:checked");
-    return;
+   // var selcats = $("input[name='catgroup']:checked");
+    
 
 
     /*
