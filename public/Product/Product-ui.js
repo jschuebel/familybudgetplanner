@@ -177,11 +177,14 @@ $('#btnAddProduct').click(function() {
       $('#txtAddCount').val(prod.Count);
       $('#txtAddCost').val(prod.Cost);
 
-      if (prod.Cost==null)
+      if (prod.Cost==null) {
         $('#prodOverChk').prop('checked', true);
-      else 
+        $('#txtAddCost').prop('disabled', true);
+      }
+      else {
         $('#prodOverChk').prop('checked', false);
-  
+        $('#txtAddCost').prop('disabled', false);
+      }
       
       $('#btnAddProduct').prop('disabled', true);
       $('#btnDelProduct').prop('disabled', false);
