@@ -66,12 +66,22 @@
   
       function RefreshCategoryRows() {
         //******** Refresh Home select      
-        $("#selCatAll").empty();
         var vals = SSS.Category.Categories();
+
+        $("#selCatAll").empty();
         (vals).forEach(element => {
           $("#selCatAll").append(new Option(element.Title, element.CategoryID));
         });
   
+        
+        //******** Refresh Home select      
+        $("#selReportCat").empty();
+        $("#selReportCat").append(new Option('Select Category', '-1'));
+        (vals).forEach(element => {
+          $("#selReportCat").append(new Option(element.Title, element.CategoryID));
+        });
+
+
         $("#tblCategoryData").find("tr:gt(0)").remove();
         (vals).forEach(element => {
           //console.log('tblCategoryData element', element);

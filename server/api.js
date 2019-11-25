@@ -143,6 +143,7 @@ router.get('/purchase', (req, res) => {
 	});
 });
 
+//Post = Add/Insert
 router.post('/purchase', (req, res) => {
 	console.log("req.body",req.body);    //body to json from a post
 	console.log("req.query", req.query);
@@ -165,6 +166,27 @@ router.post('/purchase', (req, res) => {
 	});
 });
 
+//PUT = Update
+router.put('/purchase', (req, res) => {
+	console.log("req.body",req.body);    //body to json from a post
+	console.log("req.query", req.query);
+
+	var newPurchase = JSON.parse(JSON.stringify(req.body));
+	console.log("purchase post:",newPurchase);
+
+	newPurchase.Count = parseInt(newPurchase.Count);
+	newPurchase.CostOverride=newPurchase.CostOverride==""?null:parseFloat(newPurchase.CostOverride);
+
+	db.SavePurchase(newPurchase).then(data => {
+		response.data = data;
+		res.json(response);
+	})
+	.catch(error => {
+	  console.log(error);
+	  response.data = { status:error.status.message, wasSuccessful:false};
+	  res.json(response);
+	});
+});
 
 /************************************************   Category *********************/
 router.get('/category', (req, res) => {
@@ -265,16 +287,21 @@ router.put('/categoryxref', (req, res) => {
 
 	db.DeleteCategoryXrefByProduct(newXref.ProductID).then(data => {
 		if (data.wasSuccessful) {
+			//let rowCnt=1;
 			console.log('Categoryxref deleted for ProductID', newXref.ProductID);
 			newXref.Categories.forEach((row) => {
 				console.log("xref add catid",row);
 				db.AddCategoryXref({ProductID: newXref.ProductID,CategoryID:row}).then(data => {
 					console.log('CategoryID:row insert catid', row);
+					//console.log('CategoryID:row insert rowCnt', rowCnt++);
+					//if (rowCnt >= newXref.Categories.length)
 				})
 				.catch(error => {
-				console.log(error);
-				});
+				console.log('AddCategoryXrefs catch error',error);
+				//console.log('AddCategoryXrefs:row catch rowCnt', rowCnt++);
+			});
 			})
+			//console.log('AddCategoryXrefs **** RETURNING');
 			response.data = { status:'CategoryXrefs Updated.', wasSuccessful:true};
 			res.json(response);
 		}

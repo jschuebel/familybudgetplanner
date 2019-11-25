@@ -35,6 +35,44 @@ $('#btnAddPurchase').click(function() {
     
   });
 
+  $('#btnUpdatePurchase').click(function() {
+    var selProductId = $('#selHomeProducts').val();
+    if (selProductId=="-1"){
+      alert("Product is a required field");
+      return;
+    }
+   
+    var PurchaseCount = $('#txtHomeCount').val();
+    if (PurchaseCount==""){
+      alert("A Count of Items purchased is required");
+      return;
+    }
+
+    var PurchaseCostOverride = $('#txtHomeCostOverride').val();
+    if (PurchaseCostOverride=="") PurchaseCostOverride=null;
+    
+    var PurchaseDate = $('#txtHomeDate').val();
+    if (PurchaseDate==""){
+      alert("A Date of Items purchased is required");
+      return;
+    }
+
+    SSS.Purchase.Save({ProductID: selProductId, Count: PurchaseCount, PurchaseDate: PurchaseDate, CostOverride: PurchaseCostOverride}).then(data=>
+    { 
+      RefreshPurchaseRows();
+      alert(data.status);
+      $('#btnAddPurchase').prop('disabled', false);
+      $('#btnDelPurchase').prop('disabled', true);
+      $('#btnUpdatePurchase').prop('disabled', true);
+      $('#selHomeProducts').val('-1');
+      $('#txtHomeCount').val('');
+      $('#txtHomeCostOverride').val('');
+      $('#txtHomeDate').val('');
+    });
+  });
+
+
+
 
   $('#btnClearPurchase').click(function() {
     $('#btnAddPurchase').prop('disabled', false);

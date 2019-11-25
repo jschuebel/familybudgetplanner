@@ -1,3 +1,15 @@
+$('#selReportCat').change(function() {
+    var selCategoryId = $('#selReportCat').val();
+    if (selCategoryId=="-1") {
+        alert("Please select a Category to generate report")
+      $('#btnUpdateCategoryXref').prop('disabled', true);
+      return;
+    }
+
+    SSS.Report.SetSelectedCategory({ CategoryID:selCategoryId, Title:null});
+    SSS.Report.init();
+  });
+
 
 function drawGraph( dataArr )
 {   var canvas = document.getElementById( "purchasesCanvas" );      

@@ -38,6 +38,7 @@ RunPurchaseReport(catid) {
                 reject(err);
                 return;
             }
+            this.closedb(db);
             if (rows.length===0) console.log('*********** No Purchases');
             rows.forEach((row) => {
                 if (row.Cost!=null)
@@ -46,7 +47,6 @@ RunPurchaseReport(catid) {
             });
             resolve(rows);
         });
-        this.closedb(db);
     });
 });
 }
@@ -62,6 +62,7 @@ RunPurchaseReport(catid) {
                         reject(err);
                         return;
                     }
+                    this.closedb(db);
                     if (rows.length===0) console.log('*********** No Products');
                     rows.forEach((row) => {
                         if (row.Cost!=null)
@@ -70,7 +71,6 @@ RunPurchaseReport(catid) {
                     });
                     resolve(rows);
                 });
-                this.closedb(db);
             });
         });
     }
@@ -165,6 +165,7 @@ ReadPurchases() {
                     reject(err);
                     return;
                 }
+                this.closedb(db);
                 if (rows.length===0) console.log('*********** No Purchases');
                 rows.forEach((row) => {
                     if (row.CostOverride!=null)
@@ -173,12 +174,11 @@ ReadPurchases() {
                 });
                 resolve(rows);
             });
-            this.closedb(db);
         });
     });
 }
 
-//Purchases(PurchaseID INTEGER primary key autoincrement,ProductID int, Count int, PurchaseDate text, CostOverride int)
+//Purchases(PurchaseID INTEGER primary key autoincrement,ProductID int, Count int, PurchaseDate datetime, CostOverride int)
 AddPurchase(Purchase) {
     return new Promise((resolve, reject) => {
         this.opendb().then(db => {
@@ -187,7 +187,7 @@ AddPurchase(Purchase) {
                 $fk:Purchase.ProductID,
                 $count:Purchase.Count,
                 $purchasedate:Purchase.PurchaseDate,
-                $costoverride:Purchase.CostOverride*100
+                $costoverride:(Purchase.CostOverride==null?null:Purchase.CostOverride*100)
             },(err) => {
             if (err){
                 console.log('Purchase insert err',err);
@@ -204,6 +204,35 @@ AddPurchase(Purchase) {
     });
 }
 
+
+SavePurchase(Purchase) {
+    return new Promise((resolve, reject) => {
+        this.opendb().then(db => {
+
+            db.run('update Purchases set ProductID=?, Count=?, PurchaseDate=?, CostOverride=? WHERE PurchaseID=?',[Purchase.ProductID
+                ,Purchase.Count
+                ,Purchase.PurchaseDate
+                ,(Purchase.CostOverride==null?null:Purchase.CostOverride*100)
+                ,Purchase.PurchaseID
+            ],(err) => {
+            if (err){
+                console.log('Purchase insert err');
+                console.log(err);
+                this.closedb(db);
+                let retVal={ status:err, wasSuccessful:false};
+                reject(retVal);
+            }
+            else
+                this.closedb(db);
+                let retVal={ status:`Purchase ${Purchase.ProductID} saved.`, wasSuccessful:true};
+                resolve(retVal);
+//                    console.log('CategoryXrefs insert no error');
+            });
+
+        });
+    });
+}
+
 /************************************************   Category *********************/
 ReadCategories() {  
         return new Promise((resolve, reject) => {
@@ -214,10 +243,10 @@ ReadCategories() {
                     reject(err);
                     return;
                 }
+                this.closedb(db);
                 if (rows.length===0) console.log('*********** No Categories');
                 resolve(rows);
             });
-            this.closedb(db);
             });
         });
     }
@@ -309,6 +338,7 @@ ReadCategories() {
                 }
                 if (rows.length===0) console.log('*********** No CategoryXrefs');
                 this.closedb(db);
+                console.log('CategoryXrefs read rows', rows);
                 resolve(rows);
             });
            });
@@ -324,8 +354,7 @@ ReadCategories() {
                     $catid:CategoryXref.CategoryID
                 },(err) => {
                 if (err){
-                    console.log('CategoryXrefs insert err');
-                    console.log(err);
+                    console.log('CategoryXrefs insert err',err);
                     this.closedb(db);
                     reject(err);
                 }

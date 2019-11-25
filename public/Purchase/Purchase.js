@@ -59,8 +59,38 @@ SSS.Purchase = {};
       return self.mPurchases;
     };
 
-    this.Save = function() {
-      return self.mProducts;
+    this.Save = function(UpdPurchase) {
+      if (self.selectedPurchase==null){
+        alert("Please select a Purchase");
+        return;
+      }
+
+      self.selectedPurchase.ProductID=UpdPurchase.ProductID;
+      self.selectedPurchase.Count=UpdPurchase.Count;
+      self.selectedPurchase.PurchaseDate=UpdPurchase.PurchaseDate;
+      self.selectedPurchase.CostOverride=UpdPurchase.CostOverride;
+
+      return new Promise((resolve, reject) => {
+        $.ajax({
+          url: "api/purchase",
+          data: self.selectedPurchase,
+          dataType: 'json',
+          type: 'PUT',
+          success: function(response) {
+            self.Load().then((loadPurchaseResult) => {
+                console.log("LoadPurchase from SavePurchase results",loadPurchaseResult);
+                self.mPurchases = [];
+                $.each(loadPurchaseResult, function (key, value) {
+                    self.AddPurchase(value);
+                });
+                resolve(response.data);
+            });
+          },
+          error: function(request,msg,error) {
+            reject(error);
+          }
+        });
+        });
     };
 
     this.Load = function() {

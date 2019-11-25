@@ -337,6 +337,10 @@ header {
     </div>
     <div style="background-color: lightgreen;"  class="container-fluid"> 
       <div class="row"> 
+        <div  class="col-sm-3"><SELECT class="form-control" id='selReportCat' ></SELECT></div> 
+      </div>
+      <div class="row"><div class="col-sm-1">&nbsp;</div></div>
+      <div class="row"> 
             <div  class="col-sm-3">
               <canvas id="purchasesCanvas" width="650" height="450" style="background-color:white;border: 1px solid #eee;"></canvas>
             </div> 
@@ -350,7 +354,7 @@ header {
 		<div class="container">
 			<span class="left">
 				<a id="hlink1" runat="server" Text="" href="~/ContactUS.aspx"></a> 
-				</span> <span class="right"><a href="http://www.schuebelsoftware.com" alt="Schuebel Software Solutions"><span style="font-size:small;">&copy 2010 Schuebel Software Solutions</span></a></span>
+				</span> <span class="right"><a href="http://www.schuebelsoftware.com" alt="Schuebel Software Solutions"><span style="font-size:small;">&copy 2019 Schuebel Software Solutions</span></a></span>
 		  </div>
 </footer>
 
@@ -395,9 +399,7 @@ header {
           RefreshProductCategories("-1");
           break;
         case "Reports":
-          SSS.Report.SetSelectedCategory({ CategoryID:1, Title:null});
-          SSS.Report.init();
-          break;
+           break;
       }
     }
 
