@@ -4,11 +4,14 @@ One HTML file with included LINKS, CSS, and Javascript example. NodeJS for serve
 
 ## Updates 
 
-- Example
-- Added Lodash
-- Added Json Web Token security
-- Used FullCanendar control
-- Json parsing of picture data
+- Example 
+- Html
+- Separated Javascript files
+- NodeJS Express Server with API route : Purchases, Products, Category, CategoryXref, Report
+- SQLite DB
+- HTML Canvas for line graph report  (Aggregate Monthly cost by Category)
+
+-Eventually .Net Core and Angular
 
 ## Developer
 Run `ng serve` for a dev server. Navigate to `http://localhost:9000/`. The app will automatically reload if you change any of the source files.
