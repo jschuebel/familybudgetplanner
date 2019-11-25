@@ -39,8 +39,8 @@ SSS.Purchase = {};
         ccost=formatMoney(newPurchase.Count * prod.Cost);
       newPurchase.Cost = ccost;
       newPurchase.Title = prod.Title;
-      newPurchase.PurchaseDate = new Date(newPurchase.PurchaseDate);
-              
+      newPurchase.PurchaseDate=new Date(newPurchase.PurchaseDate);
+
       console.log('Purchase Add newpurchase', newPurchase);
       self.mPurchases.push(newPurchase);
     }

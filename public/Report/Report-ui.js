@@ -69,14 +69,12 @@ function drawGraph( dataArr )
         context.font = "12px Arial";       
         context.moveTo( GRAPH_LEFT, ( GRAPH_HEIGHT - dataArr[ 0 ].Cost / largest * GRAPH_HEIGHT ) + GRAPH_TOP );      
         // draw reference value for day of the week   
-        let dat =  dataArr[ 0 ].PurchaseDate.getMonth()+1 + "/" + (dataArr[ 0 ].PurchaseDate.getFullYear() + "").substr(2);
-        context.fillText( dat, 15, GRAPH_BOTTOM + 25);      
+        context.fillText( dataArr[ 0 ].monthYear, 15, GRAPH_BOTTOM + 25);      
         for( var i = 1; i < arrayLen; i++ )
         {
             context.lineTo( GRAPH_RIGHT / arrayLen * i + GRAPH_LEFT, ( GRAPH_HEIGHT - dataArr[ i ].Cost / largest * GRAPH_HEIGHT ) + GRAPH_TOP );          
             // draw reference value for day of the week          
-            let dat =  dataArr[i].PurchaseDate.getMonth()+1 + "/" + (dataArr[i].PurchaseDate.getFullYear() + "").substr(2)
-            context.fillText(dat, GRAPH_RIGHT / arrayLen * i, GRAPH_BOTTOM + 25);      
+            context.fillText(dataArr[i].monthYear, GRAPH_RIGHT / arrayLen * i, GRAPH_BOTTOM + 25);      
         }      
         context.stroke();  
 } 

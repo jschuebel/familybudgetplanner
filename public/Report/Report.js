@@ -30,12 +30,30 @@ SSS.Report = {};
     this.init = function(){
       self.Load().then(data => {
         console.log('report init after promis data', data);
+        
+        let rptData = [];
         data.forEach((row) => {
           if (row.PurchaseDate!=null)
               row.PurchaseDate = new Date(row.PurchaseDate);
+
+          let mth =  rptData.find(function(rpt) {
+            return rpt.month==(row.PurchaseDate.getMonth()+1);
+          });
+          
+          if (mth!=null) {
+            mth.Cost += row.Cost;
+          } else {
+            let rptRow = {};
+            rptRow.month=row.PurchaseDate.getMonth()+1;
+            rptRow.monthYear = row.PurchaseDate.getMonth()+1 + "/" + (row.PurchaseDate.getFullYear() + "").substr(2);
+            rptRow.Cost = row.Cost;
+            rptData.push(rptRow);
+          }
+
         });
-        self.mPurchases = data;
-        drawGraph( self.mPurchases);
+        //self.mPurchases = data;
+        
+        drawGraph(rptData);
        })
        .catch(error => {
         console.log(error);
