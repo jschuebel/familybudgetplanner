@@ -112,7 +112,7 @@ $('#btnAddProduct').click(function() {
 
     //******** Refresh Home select      
     $("#selHomeProducts").empty();
-    $("#selHomeProducts").append(new Option("............Select Product".padright("........................................."), '-1'));
+    $("#selHomeProducts").append(new Option("Title...............Count...........Cost", '-1'));
 
  
     var vals = SSS.Product.Products();
@@ -123,7 +123,7 @@ $('#btnAddProduct').click(function() {
 
     //******** Refresh Category select      
     $("#selCatProducts").empty();
-    $("#selCatProducts").append(new Option("Select Product", "-1"));
+    $("#selCatProducts").append(new Option("<<<Select Product>>>", '-1'));
     var vals = SSS.Product.Products();
     (vals).forEach(element => {
       $("#selCatProducts").append(new Option(element.Title, element.ProductID));

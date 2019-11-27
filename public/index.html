@@ -20,10 +20,6 @@ body {font-family: "Lato", sans-serif;
   /*  background-color: #e2e2e2; */
 	}
 
-.monoselect {
-    font-family: monospace,monospace;
-}
-
 
 /* Style the tab */
 .tab {
@@ -120,19 +116,16 @@ header {
 
         <div style="background-color: lightgreen;"  class="container-fluid"> 
             <div class="row"> 
-                <div class="col-sm-4 offset-sm-2"><label class='monoselect'>Title.............Count.........Cost</label></div> 
-            </div>
-            <div class="row"> 
                 <div class="col-sm-2"><label class="label" >Product</label></div> 
-                <div class="col-sm-3"><SELECT class='monoselect' id='selHomeProducts' name='selProcuts' ></SELECT></div> 
+                <div class="col-sm-3"><SELECT class="text-monospace form-control" id='selHomeProducts' ></SELECT></div> 
             </div>
             <div class="row"> 
               <div class="col-sm-2"><label class="label" ># Bought</label></div> 
-              <div class="col-sm-2"><input id='txtHomeCount' type="text" class="form-control" /></div>
+              <div class="col-sm-1"><input id='txtHomeCount'  type="number" min="1" step="1" class="form-control" /></div>
           </div>  
           <div class="row"> 
             <div class="col-sm-2"><label class="label" >Cost Override</label></div> 
-            <div class="col-sm-2"><input id='txtHomeCostOverride' type="text" class="form-control" /></div>
+            <div class="col-sm-1"><input id='txtHomeCostOverride'  type="number" min="0.01" step="1.00" class="form-control" /></div>
         </div>  
         <div class="row"> 
             <div class="col-sm-2"><label class="label" >Date of Purchase</label></div> 
@@ -189,29 +182,44 @@ header {
           </div>
         
         <div  style="background-color: lightgreen;"  class="container-fluid"> 
-          <div class="row"><div class="col-sm-1">&nbsp;</div></div>
-          <div class="row"> 
-                <div class="col-sm-2">Title</div> 
-                <div class="col-sm-2"><INPUT id='txtAddTitle' name='txtAddTitle' /></div> 
-            </div>
-            <div class="row"> 
-                <div class="col-sm-2">Count</div> 
-                <div class="col-sm-2"><INPUT id='txtAddCount' name='txtAddCount' /></div> 
-            </div>
-            <div class="row"> 
-                <div class="col-sm-2">Cost</div> 
-                <div class="col-sm-2"><INPUT id='txtAddCost' name='txtAddCost' /></div> 
-                <div class="col-sm-2">
-                  <label class='checkbox-inline'><input type='checkbox' id='prodOverChk' />Has Override</label>
-                </div> 
-            </div>
-            <div class="row"><div class="col-sm-1">&nbsp;</div></div>
-            <div class="row"> 
-                <div class="col-sm-1"><button class="btn btn-primary" id='btnAddProduct' >Add</button></div> 
-                <div class="col-sm-1"><button class="btn btn-primary" id='btnClearProduct' >Clear</button></div> 
-                <div class="col-sm-1"><button class="btn btn-primary" disabled id='btnUpdateProduct' >Update</button></div> 
-                <div class="col-sm-1"><button class="btn btn-primary" disabled id='btnDelProduct' >Del</button></div> 
+
+          <div class="row">
+              <div class="col-sm-4">
+                    <div class="row"><div class="col-sm-1">&nbsp;</div></div>
+                    <div class="row"> 
+                          <div class="col-sm-3">Title</div> 
+                          <div class="col-sm-4"><INPUT id='txtAddTitle' class="form-control" /></div> 
+                      </div>
+                      <div class="row"> 
+                          <div class="col-sm-3">Count</div> 
+                          <div class="col-sm-2"><INPUT id='txtAddCount' type="number" min="1" step="1" class="form-control" name='txtAddCount' /></div> 
+                      </div>
+                      <div class="row"> 
+                          <div class="col-sm-3">Cost</div> 
+                          <div class="col-sm-3"><INPUT id='txtAddCost' type="number" min="0.01" step="1.00" class="form-control" name='txtAddCost' ></input></div> 
+                          <div class="col-sm-4">
+                            <label class='checkbox-inline'><input type='checkbox' id='prodOverChk' />Has Override</label>
+                          </div> 
+                      </div>
+                      <div class="row"><div class="col-sm-1">&nbsp;</div></div>
+                      <div class="row"> 
+                          <div class="col-sm-3"><button class="btn btn-primary" id='btnAddProduct' >Add</button></div> 
+                          <div class="col-sm-3"><button class="btn btn-primary" id='btnClearProduct' >Clear</button></div> 
+                          <div class="col-sm-3"><button class="btn btn-primary" disabled id='btnUpdateProduct' >Update</button></div> 
+                          <div class="col-sm-3"><button class="btn btn-primary" disabled id='btnDelProduct' >Del</button></div> 
+                      </div>
              </div>
+             <div style="border-color: black;border-style: solid;" class="col-sm-8">
+                <div class="row"> 
+                    <div class="col-sm-12 offset-sm-5"><label style="font-weight: bold; font-size: larger;">Categories</label></div> 
+                </div>
+                <div class="row"> 
+                    <div class="col-sm-12"><div id='divProdCatXrefs'></div></div> 
+                </div>
+             </div>
+          </div>
+
+
         </div>
 
         <div class="table-responsive">

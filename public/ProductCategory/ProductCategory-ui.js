@@ -10,6 +10,9 @@ function RefreshProductCategories(selProductId) {
     var rowcnt=1;
     $("#divCatXrefs").empty();
     var appendEl3 = $(`<div class="row" id='${rowcnt}'></div>`).appendTo("#divCatXrefs");
+
+    $("#divProdCatXrefs").empty();
+    var appendEl4 = $(`<div class="row" id='${rowcnt}'></div>`).appendTo("#divProdCatXrefs");
     (all).forEach(element => {
       let cat =  selected.find(function(cat) {
             return cat.CategoryID==element.CategoryID;
@@ -21,12 +24,15 @@ function RefreshProductCategories(selProductId) {
       else {
         hldcheck="checked";
       }
-      if (colcnt>2) {
-          appendEl3 = $("<div class='row' ></div>").appendTo("#divCatXrefs");
+      if (colcnt>5) {
+        appendEl3 = $("<div class='row' ></div>").appendTo("#divCatXrefs");
+        appendEl4 = $("<div class='row' ></div>").appendTo("#divProdCatXrefs");
+        
           rowcnt++;
           colcnt=0;
       }
       $(`<div  class='col-sm-2'><label class='checkbox-inline'><input type='checkbox' name='catgroup' ${hldcheck} id='${element.CategoryID}' />${element.Title}</label></div></div>`).appendTo(appendEl3);  
+      $(`<div  class='col-sm-2'><label class='checkbox-inline'><input type='checkbox' name='catgroup' ${hldcheck} id='${element.CategoryID}' />${element.Title}</label></div></div>`).appendTo(appendEl4);
           colcnt++;
 
     });
