@@ -7,7 +7,6 @@ SSS.Purchase = {};
     self.selectedPurchase = null;
 
     this.Add = function(newPurchase) {
-      console.log('***** ADD Purchase ');
       return new Promise((resolve, reject) => {
         $.post("api/purchase",newPurchase,
           function(purchRespone, status){
@@ -41,7 +40,7 @@ SSS.Purchase = {};
       newPurchase.Title = prod.Title;
       newPurchase.PurchaseDate=new Date(newPurchase.PurchaseDate);
 
-      console.log('Purchase Add newpurchase', newPurchase);
+      //console.log('Purchase Add newpurchase', newPurchase);
       self.mPurchases.push(newPurchase);
     }
 

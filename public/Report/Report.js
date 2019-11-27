@@ -27,7 +27,7 @@ SSS.Report = {};
       });
     };
 
-    this.init = function(){
+    this.init = function(reportType){
       self.Load().then(data => {
         console.log('report init after promis data', data);
         
@@ -52,8 +52,19 @@ SSS.Report = {};
 
         });
         //self.mPurchases = data;
-        
-        drawGraph(rptData);
+        var myBarchart = new Barchart(
+          {
+              padding:20,
+              gridScale:25,
+              gridColor:"#67b6c7",
+              data:rptData
+            //  colors:["#a55ca5","#67b6c7", "#bccd7a","#eb9743"]
+          });
+
+          if (reportType==1)
+            myBarchart.draw();
+          else
+            drawGraph(rptData);
        })
        .catch(error => {
         console.log(error);

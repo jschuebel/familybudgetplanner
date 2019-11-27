@@ -21,12 +21,12 @@ function RefreshProductCategories(selProductId) {
       else {
         hldcheck="checked";
       }
-      if (colcnt>5) {
+      if (colcnt>2) {
           appendEl3 = $("<div class='row' ></div>").appendTo("#divCatXrefs");
           rowcnt++;
           colcnt=0;
       }
-      $(`<div style='background-color: white;' class='col-sm-2'><label class='checkbox-inline'><input type='checkbox' name='catgroup' ${hldcheck} id='${element.CategoryID}' />${element.Title}</label></div></div>`).appendTo(appendEl3);  
+      $(`<div  class='col-sm-2'><label class='checkbox-inline'><input type='checkbox' name='catgroup' ${hldcheck} id='${element.CategoryID}' />${element.Title}</label></div></div>`).appendTo(appendEl3);  
           colcnt++;
 
     });
