@@ -6,6 +6,7 @@ SSS.Category = {};
     self.mCategories = [];
     self.mCategoriesXref = [];
     self.selectedCategory = null;
+    self.LoadErrorMessage='';
 
     this.Add = function(newPurchase) {
       return new Promise((resolve, reject) => {
@@ -103,21 +104,37 @@ SSS.Category = {};
 
     this.LoadCategory = function() {
       return new Promise((resolve, reject) => {
-        $.getJSON("api/category?brk=" + (new Date()).getTime(), null, function (data) {
+        $.getJSON("api/category?brk=" + (new Date()).getTime(), null, function (data, textStatus, request) {
         console.log('Categories init', data);
-          resolve({ type:1, data : data.data});
+        console.log('RowTotal', request.getResponseHeader('X-Total-Count')); 
+        resolve({ type:1, data : data});
         })
-        .fail(function(jqXHR, textStatus, errorThrown) { alert('getJSON request failed! ' + textStatus); reject(textStatus)})
+        .fail(function(jqXHR, textStatus, errorThrown) 
+        { 
+          //alert('getJSON request failed! ' + textStatus); 
+          if (jqXHR.status!=200)
+            reject(jqXHR.responseText)
+          else
+            reject(textStatus)
+        })
       });
     };
 
     this.LoadCategoryXref = function() {
       return new Promise((resolve, reject) => {
-        $.getJSON("api/categoryxref?brk=" + (new Date()).getTime(), null, function (data) {
+        $.getJSON("api/categoryxref?brk=" + (new Date()).getTime(), null, function (data, textStatus, request) {
           console.log('Categories categoryxref init', data);
-          resolve({ type:2, data : data.data});
+          console.log('RowTotal', request.getResponseHeader('X-Total-Count')); 
+          resolve({ type:2, data : data});
         })
-        .fail(function(jqXHR, textStatus, errorThrown) { alert('getJSON request failed! ' + textStatus); reject(textStatus)})
+        .fail(function(jqXHR, textStatus, errorThrown)
+        { 
+          //alert('getJSON request failed! ' + textStatus); 
+          if (jqXHR.status!=200)
+            reject(jqXHR.responseText)
+          else
+            reject(textStatus)
+        })
       });
     };
 
@@ -147,8 +164,9 @@ SSS.Category = {};
     };
 
 
-
-
+    this.GetLoadError = function() {
+      return self.LoadErrorMessage;
+    }
 
     function init(){
       console.log("Category init");
@@ -173,7 +191,9 @@ SSS.Category = {};
 
       })
       .catch(error => {
-        console.log(error);
+        console.log('Category Init catch error',error);
+        self.LoadErrorMessage=`Load Category(${error})`;
+        RefreshCategoryRows();
       });
     }
     init();

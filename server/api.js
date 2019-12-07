@@ -55,13 +55,15 @@ router.get('/report/:id', (req, res) => {
 /************************************************ Product *********************/
 	router.get('/product', (req, res) => {
 		db.ReadProducts().then(data => {
-			response.data = data;
-			res.json(response);
+			res.set('Access-Control-Expose-Headers','X-Total-Count, X-Paging-PageSize')
+			res.set('X-Total-Count', data.length)
+			res.status(200);
+			res.json(data);
 		})
 		.catch(error => {
-		console.log(error);
-		response.data = { status:error.status.message, wasSuccessful:false};
-		res.json(response);
+			console.log(error);
+			res.status(400);
+			res.send(error.message);
 		});
 	//	response.data = [{ ProductID: 1, Title: "Water", Count: 24, Cost: 1.99},{ ProductID: 2, Title: "Coffee Water", Count: 6, Cost: 2.99}];
 	});
@@ -134,12 +136,15 @@ router.get('/report/:id', (req, res) => {
 router.get('/purchase', (req, res) => {
 	db.ReadPurchases().then(data => {
 		response.data = data;
-		res.json(response);
+		res.set('Access-Control-Expose-Headers','X-Total-Count, X-Paging-PageSize')
+		res.set('X-Total-Count', data.length)
+		res.status(200);
+		res.json(data);
 	})
 	.catch(error => {
 	  console.log(error);
-	  response.data = { status:error.status.message, wasSuccessful:false};
-	  res.json(response);
+	  res.status(400);
+	  res.send(error.message);
 	});
 });
 
@@ -191,14 +196,16 @@ router.put('/purchase', (req, res) => {
 /************************************************   Category *********************/
 router.get('/category', (req, res) => {
 	db.ReadCategories().then(data => {
-		response.data = data;
-		res.json(response);
+		res.set('Access-Control-Expose-Headers','X-Total-Count, X-Paging-PageSize')
+		res.set('X-Total-Count', data.length)
+		res.status(200);
+		res.json(data);
 	})
 	.catch(error => {
-	  console.log(error);
-	  response.data = { status:error.status.message, wasSuccessful:false};
-	  res.json(response);
-	});
+		console.log(error);
+		res.status(400);
+		res.send(error.message);
+	  });
 });
 
 router.post('/category', (req, res) => {
@@ -266,13 +273,15 @@ router.delete('/category/:id', (req, res) => {
 /************************************************   CategoryXref *********************/
 router.get('/categoryxref', (req, res) => {
 	db.ReadCategoryXref().then(data => {
-		response.data = data;
-		res.json(response);
+		res.set('Access-Control-Expose-Headers','X-Total-Count, X-Paging-PageSize')
+		res.set('X-Total-Count', data.length)
+		res.status(200);
+		res.json(data);
 	})
 	.catch(error => {
-	  console.log(error);
-	  response.data = { status:error.status.message, wasSuccessful:false};
-	  res.json(response);
+		console.log(error);
+		res.status(400);
+		res.send(error.message);
 	});
 });
 

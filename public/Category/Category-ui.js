@@ -69,46 +69,62 @@
         var vals = SSS.Category.Categories();
 
         $("#selCatAll").empty();
-        (vals).forEach(element => {
-          $("#selCatAll").append(new Option(element.Title, element.CategoryID));
-        });
-  
+
+        let errMessage = SSS.Category.GetLoadError();
+        if (errMessage!='') {
+          $("#selCatAll").append(new Option(errMessage, '-1'));
+        }
+        else {
+          (vals).forEach(element => {
+            $("#selCatAll").append(new Option(element.Title, element.CategoryID));
+          });
+        }
         
         //******** Refresh Home select      
         $("#selReportCat").empty();
-        $("#selReportCat").append(new Option('Select Category', '-1'));
-        (vals).forEach(element => {
-          $("#selReportCat").append(new Option(element.Title, element.CategoryID));
-        });
-
+        if (errMessage!='') {
+          $("#selReportCat").append(new Option(errMessage, '-1'));
+        }
+        else {
+          $("#selReportCat").append(new Option('Select Category', '-1'));
+          (vals).forEach(element => {
+            $("#selReportCat").append(new Option(element.Title, element.CategoryID));
+          });
+      }
 
         $("#tblCategoryData").find("tr:gt(0)").remove();
-        (vals).forEach(element => {
-          //console.log('tblCategoryData element', element);
+
+        if (errMessage!='') {
           var appendEl2 = $("<tr></tr>").appendTo("#tblCategoryData");
-          $("<td>" + element.CategoryID + "</td><td>" + element.Title + "</td>").appendTo(appendEl2);  
-        });
-  
-        $("#tblCategoryData").find("tr:gt(0)").click(function(event){
-          console.log("event",event.currentTarget);
-          let selectCatID = event.currentTarget.childNodes[0].innerText;
-          let selectCatTitle = event.currentTarget.childNodes[1].innerText;
-  
-          var cats = SSS.Category.Categories();
-          let cat =  cats.find(function(cat) {
-                return cat.CategoryID==selectCatID;
-              });
-          if (cat==null) alert("problem finding Category=" + selectCatTitle);
-          //console.log("category found",cat);
-          SSS.Category.SetSelectedCategory(cat);
-  
-          
-          $('#btnAddCategory').prop('disabled', true);
-          $('#btnDelCategory').prop('disabled', false);
-          $('#btnUpdateCategory').prop('disabled', false);
-          $('#txtAddCategoryTitle').val(cat.Title);
-        });
-  
+          $("<td colspan='2'>" + errMessage + "</td>").appendTo(appendEl2);  
+      }
+        else {
+          (vals).forEach(element => {
+            //console.log('tblCategoryData element', element);
+            var appendEl2 = $("<tr></tr>").appendTo("#tblCategoryData");
+            $("<td>" + element.CategoryID + "</td><td>" + element.Title + "</td>").appendTo(appendEl2);  
+          });
+    
+          $("#tblCategoryData").find("tr:gt(0)").click(function(event){
+            console.log("event",event.currentTarget);
+            let selectCatID = event.currentTarget.childNodes[0].innerText;
+            let selectCatTitle = event.currentTarget.childNodes[1].innerText;
+    
+            var cats = SSS.Category.Categories();
+            let cat =  cats.find(function(cat) {
+                  return cat.CategoryID==selectCatID;
+                });
+            if (cat==null) alert("problem finding Category=" + selectCatTitle);
+            //console.log("category found",cat);
+            SSS.Category.SetSelectedCategory(cat);
+    
+            
+            $('#btnAddCategory').prop('disabled', true);
+            $('#btnDelCategory').prop('disabled', false);
+            $('#btnUpdateCategory').prop('disabled', false);
+            $('#txtAddCategoryTitle').val(cat.Title);
+          });
+        }
   
       }
   

@@ -112,85 +112,101 @@ $('#btnAddProduct').click(function() {
 
     //******** Refresh Home select      
     $("#selHomeProducts").empty();
-    $("#selHomeProducts").append(new Option("Title...............Count...........Cost", '-1'));
 
+    if (SSS.Product.GetLoadError()!='') {
+      $("#selHomeProducts").append(new Option(SSS.Product.GetLoadError(), '-1'));
+    }
+    else {
+      $("#selHomeProducts").append(new Option("Title...............Count...........Cost", '-1'));
  
-    var vals = SSS.Product.Products();
-    (vals).forEach(element => {
-      var txt = element.Title.padright(".....................") + (element.Count + "").padright("...............") + (element.Cost==null?'$0.00':formatMoney(element.Cost));
-      $("#selHomeProducts").append(new Option(txt, element.ProductID));
-    });
+      var vals = SSS.Product.Products();
+      (vals).forEach(element => {
+        var txt = element.Title.padright(".....................") + (element.Count + "").padright("...............") + (element.Cost==null?'$0.00':formatMoney(element.Cost));
+        $("#selHomeProducts").append(new Option(txt, element.ProductID));
+      });
+    }
 
     //******** Refresh Category select      
     $("#selCatProducts").empty();
-    $("#selCatProducts").append(new Option("<<<Select Product>>>", '-1'));
-    var vals = SSS.Product.Products();
-    (vals).forEach(element => {
-      $("#selCatProducts").append(new Option(element.Title, element.ProductID));
-    });
-
+    if (SSS.Product.GetLoadError()!='') {
+      $("#selCatProducts").append(new Option(SSS.Product.GetLoadError(), '-1'));
+    }
+    else {
+      $("#selCatProducts").append(new Option("<<<Select Product>>>", '-1'));
+      var vals = SSS.Product.Products();
+      (vals).forEach(element => {
+        $("#selCatProducts").append(new Option(element.Title, element.ProductID));
+      });
+    }
     // Refresh Product grid data
     $("#tblProductData2").find("tr:gt(0)").remove();
-    (vals).forEach(element => {
-      //console.log('tblCategoryData element', element);
-      var appendEl2 = $("<tr></tr>").appendTo("#tblProductData2");
-      $("<td>" + element.ProductID + "</td><td>" + element.Title + "</td><td>" + element.Count + "</td><td>" + formatMoney(element.Cost) + "</td>").appendTo(appendEl2);  
-    });
+    if (SSS.Product.GetLoadError()!='') {
+      var appendEl2 = $(`<tr></tr>`).appendTo("#tblProductData2");
+      $("<td colspan='6'>" + SSS.Product.GetLoadError() + "</td>").appendTo(appendEl2);  
 
-    $("#prodOverChk").change(function() {
-      let prod = SSS.Product.GetSelectedProduct();
-      if (prod==null) {
-        alert("problem finding Product=" + selectProdTitle);
-        return;
-      }
+    }
+    else
+    {
+      (vals).forEach(element => {
+        //console.log('tblCategoryData element', element);
+        var appendEl2 = $("<tr></tr>").appendTo("#tblProductData2");
+        $("<td>" + element.ProductID + "</td><td>" + element.Title + "</td><td>" + element.Count + "</td><td>" + formatMoney(element.Cost) + "</td>").appendTo(appendEl2);  
+      });
 
-      if(this.checked) {
-         prod.Cost=null;
-         $('#txtAddCost').val('');
-         $('#txtAddCost').prop('disabled', true);
-      }
-      else {
-        prod.Cost=null;
-        $('#txtAddCost').prop('disabled', false);
-     }
-  });
+      $("#prodOverChk").change(function() {
+          let prod = SSS.Product.GetSelectedProduct();
+          if (prod==null) {
+            alert("problem finding Product=" + selectProdTitle);
+            return;
+          }
 
-    //******** Product grid ROW CLICK
-    $("#tblProductData2").find("tr:gt(0)").click(function(event){
-      console.log("event",event.currentTarget);
-      let selectProdID = event.currentTarget.childNodes[0].innerText;
-      console.log("selectProdID",selectProdID);
-      let selectProdTitle = event.currentTarget.childNodes[1].innerText;
-  
-      var prods = SSS.Product.Products();
-      let prod =  prods.find(function(prod) {
-            return prod.ProductID==selectProdID;
-          });
-      if (prod==null) {
-        alert("problem finding Product=" + selectProdTitle);
-        return;
-      }
-      //console.log("category found",cat);
-      SSS.Product.SetSelectedProduct(prod);
+          if(this.checked) {
+            prod.Cost=null;
+            $('#txtAddCost').val('');
+            $('#txtAddCost').prop('disabled', true);
+          }
+          else {
+            prod.Cost=null;
+            $('#txtAddCost').prop('disabled', false);
+        }
+      });
 
-      $('#txtAddTitle').val(prod.Title);
-      $('#txtAddCount').val(prod.Count);
-      $('#txtAddCost').val(prod.Cost);
+      //******** Product grid ROW CLICK
+      $("#tblProductData2").find("tr:gt(0)").click(function(event){
+        console.log("event",event.currentTarget);
+        let selectProdID = event.currentTarget.childNodes[0].innerText;
+        console.log("selectProdID",selectProdID);
+        let selectProdTitle = event.currentTarget.childNodes[1].innerText;
+    
+        var prods = SSS.Product.Products();
+        let prod =  prods.find(function(prod) {
+              return prod.ProductID==selectProdID;
+            });
+        if (prod==null) {
+          alert("problem finding Product=" + selectProdTitle);
+          return;
+        }
+        //console.log("category found",cat);
+        SSS.Product.SetSelectedProduct(prod);
 
-      if (prod.Cost==null) {
-        $('#prodOverChk').prop('checked', true);
-        $('#txtAddCost').prop('disabled', true);
-      }
-      else {
-        $('#prodOverChk').prop('checked', false);
-        $('#txtAddCost').prop('disabled', false);
-      }
-      
-      $('#btnAddProduct').prop('disabled', true);
-      $('#btnDelProduct').prop('disabled', false);
-      $('#btnUpdateProduct').prop('disabled', false);
-    });
+        $('#txtAddTitle').val(prod.Title);
+        $('#txtAddCount').val(prod.Count);
+        $('#txtAddCost').val(prod.Cost);
 
+        if (prod.Cost==null) {
+          $('#prodOverChk').prop('checked', true);
+          $('#txtAddCost').prop('disabled', true);
+        }
+        else {
+          $('#prodOverChk').prop('checked', false);
+          $('#txtAddCost').prop('disabled', false);
+        }
+        
+        $('#btnAddProduct').prop('disabled', true);
+        $('#btnDelProduct').prop('disabled', false);
+        $('#btnUpdateProduct').prop('disabled', false);
+      });
+    }
     /******** bootstrap  Product grid
     var rows = $("#tblProductData > .row");
     for (i=0; i< rows.length;i++) {
