@@ -5,9 +5,9 @@ SSS.Purchase = {};
     let self = this;
     self.mPurchases = [];
     self.selectedPurchase = null;
+    self.LoadErrorMessage = '';
 
     this.Add = function(newPurchase) {
-      console.log('***** ADD Purchase ');
       return new Promise((resolve, reject) => {
         $.post("api/purchase",newPurchase,
           function(purchRespone, status){
@@ -27,21 +27,31 @@ SSS.Purchase = {};
     };
 
     this.AddPurchase = function(newPurchase) {
-      var prod =  SSS.Product.GetProductByID(newPurchase.ProductID);
-      //console.log('Purchase Add GetProductByID', prod);
-      newPurchase.UnitCount = prod.Count;
-      newPurchase.UnitCost = prod.Cost==null?'0.00':prod.Cost;
+      if (SSS.Product.GetLoadError()!='') {
+        newPurchase.UnitCount = 0;
+        newPurchase.UnitCost = '0.00';
+        let ccost=0.0;
+        if (newPurchase.CostOverride!=null)
+          ccost=formatMoney(newPurchase.Count * newPurchase.CostOverride);
+        newPurchase.Cost = ccost;
+        newPurchase.Title = 'N/A';
+      }
+      else {
+        var prod =  SSS.Product.GetProductByID(newPurchase.ProductID);
+        //console.log('Purchase Add GetProductByID', prod);
+        newPurchase.UnitCount = prod.Count;
+        newPurchase.UnitCost = prod.Cost==null?'0.00':prod.Cost;
 
-      let ccost=0.0;
-      if (newPurchase.CostOverride!=null)
-        ccost=formatMoney(newPurchase.Count * newPurchase.CostOverride);
-      else
-        ccost=formatMoney(newPurchase.Count * prod.Cost);
-      newPurchase.Cost = ccost;
-      newPurchase.Title = prod.Title;
+        let ccost=0.0;
+        if (newPurchase.CostOverride!=null)
+          ccost=formatMoney(newPurchase.Count * newPurchase.CostOverride);
+        else
+          ccost=formatMoney(newPurchase.Count * prod.Cost);
+        newPurchase.Cost = ccost;
+        newPurchase.Title = prod.Title;
+      }
       newPurchase.PurchaseDate=new Date(newPurchase.PurchaseDate);
-
-      console.log('Purchase Add newpurchase', newPurchase);
+      //console.log('Purchase Add newpurchase', newPurchase);
       self.mPurchases.push(newPurchase);
     }
 
@@ -76,7 +86,10 @@ SSS.Purchase = {};
           data: self.selectedPurchase,
           dataType: 'json',
           type: 'PUT',
-          success: function(response) {
+          success: function(response, textStatus, request) {
+            
+            //console.log(request.getResponseHeader('Link')); 
+
             self.Load().then((loadPurchaseResult) => {
                 console.log("LoadPurchase from SavePurchase results",loadPurchaseResult);
                 self.mPurchases = [];
@@ -95,17 +108,30 @@ SSS.Purchase = {};
 
     this.Load = function() {
       return new Promise((resolve, reject) => {
-        $.getJSON("api/purchase?brk=" + (new Date()).getTime(), null, function (data) {
+        $.getJSON("api/purchase?brk=" + (new Date()).getTime(), null, function (data, textStatus, request) {
           console.log('purchase init', data);
-          resolve(data.data);
+          console.log('RowTotal', request.getResponseHeader('X-Total-Count')); 
+          resolve(data);
         })
-        .fail(function(jqXHR, textStatus, errorThrown) { alert('getJSON request failed! ' + textStatus); reject(textStatus)})
+        .fail(function(jqXHR, textStatus, errorThrown) 
+        { 
+          //alert('getJSON request failed! ' + textStatus); 
+          if (jqXHR.status!=200)
+            reject(jqXHR.responseText)
+          else
+            reject(textStatus)
+        })
       });
     };
+
+    this.GetLoadError = function() {
+      return self.LoadErrorMessage;
+    }
 
     this.init = function(){
       self.Load().then(data => {
         console.log('purchase init after promis data', data);
+        self.LoadErrorMessage='';
         self.mPurchases = [];
         $.each(data, function (key, value) {
             self.AddPurchase(value);
@@ -113,7 +139,10 @@ SSS.Purchase = {};
         document.getElementById("defaultOpen").click();
        })
        .catch(error => {
-        console.log(error);
+          console.log('Purchase Init catch error',error);
+          self.mPurchases = [];
+          self.LoadErrorMessage=`Load Purchase(${error})`;
+          document.getElementById("defaultOpen").click();
       });
     }
     

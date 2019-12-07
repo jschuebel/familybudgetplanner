@@ -104,38 +104,46 @@ $('#btnAddPurchase').click(function() {
 
       // Refresh Product grid data
       $("#tblPurchaseData2").find("tr:gt(0)").remove();
-      (vals).forEach(element => {
-        //console.log('datetype', typeof(element.PurchaseDate));
-        var appendEl2 = $(`<tr id='${element.PurchaseID}'></tr>`).appendTo("#tblPurchaseData2");
-        $("<td>" + element.Title + "</td><td>" + element.UnitCount + "</td><td>" + formatMoney(element.UnitCost) + "</td><td>" + element.Count + "</td><td>" + element.Cost + "</td><td>" + element.PurchaseDate.toDateString() + "</td>").appendTo(appendEl2);  
-      });
 
-      
-      //******** Product grid ROW CLICK
-      $("#tblPurchaseData2").find("tr:gt(0)").click(function(event){
-        console.log("event",event.currentTarget);
-        let selectPurchaseID = event.currentTarget.id;
-        //console.log("selectPurchaseID",selectPurchaseID);
-        let selectPurchTitle = event.currentTarget.childNodes[0].innerText;
-        //console.log("selectPurchTitle",selectPurchTitle);
-       
-        var purchs = SSS.Purchase.Purchases();
-        let purchase =  purchs.find(function(purch) {
-              return purch.PurchaseID==selectPurchaseID;
-            });
-        if (purchase==null) alert("problem finding Purchase=" + selectPurchTitle);
-        console.log("purchase found",purchase);
-        SSS.Purchase.SetSelectedPurchase(purchase);
-  
-        //$('#selHomeProducts').val();
-        $('#txtHomeCount').val(purchase.Count);
-        let mth = "" + (purchase.PurchaseDate.getMonth()+1);
-        $('#txtHomeDate').val(purchase.PurchaseDate.getFullYear() + "-" + mth.padleft("00") + "-" +  ("" + purchase.PurchaseDate.getDate()).padleft("00"));
-        $('#selHomeProducts').val(purchase.ProductID);
-        $('#txtHomeCostOverride').val(purchase.CostOverride==null?'':purchase.CostOverride);
+      if (SSS.Purchase.GetLoadError()!='') {
+        var appendEl2 = $(`<tr></tr>`).appendTo("#tblPurchaseData2");
+        $("<td colspan='6'>" + SSS.Purchase.GetLoadError() + "</td>").appendTo(appendEl2);  
+
+      }
+      else
+      {
+        (vals).forEach(element => {
+          //console.log('datetype', typeof(element.PurchaseDate));
+          var appendEl2 = $(`<tr id='${element.PurchaseID}'></tr>`).appendTo("#tblPurchaseData2");
+          $("<td>" + element.Title + "</td><td>" + element.UnitCount + "</td><td>" + formatMoney(element.UnitCost) + "</td><td>" + element.Count + "</td><td>" + element.Cost + "</td><td>" + element.PurchaseDate.toDateString() + "</td>").appendTo(appendEl2);  
+        });
         
-        $('#btnAddPurchase').prop('disabled', true);
-        $('#btnDelPurchase').prop('disabled', false);
-        $('#btnUpdatePurchase').prop('disabled', false);
-      });
+        //******** Product grid ROW CLICK
+        $("#tblPurchaseData2").find("tr:gt(0)").click(function(event){
+          console.log("event",event.currentTarget);
+          let selectPurchaseID = event.currentTarget.id;
+          //console.log("selectPurchaseID",selectPurchaseID);
+          let selectPurchTitle = event.currentTarget.childNodes[0].innerText;
+          //console.log("selectPurchTitle",selectPurchTitle);
+        
+          var purchs = SSS.Purchase.Purchases();
+          let purchase =  purchs.find(function(purch) {
+                return purch.PurchaseID==selectPurchaseID;
+              });
+          if (purchase==null) alert("problem finding Purchase=" + selectPurchTitle);
+          console.log("purchase found",purchase);
+          SSS.Purchase.SetSelectedPurchase(purchase);
+    
+          //$('#selHomeProducts').val();
+          $('#txtHomeCount').val(purchase.Count);
+          let mth = "" + (purchase.PurchaseDate.getMonth()+1);
+          $('#txtHomeDate').val(purchase.PurchaseDate.getFullYear() + "-" + mth.padleft("00") + "-" +  ("" + purchase.PurchaseDate.getDate()).padleft("00"));
+          $('#selHomeProducts').val(purchase.ProductID);
+          $('#txtHomeCostOverride').val(purchase.CostOverride==null?'':purchase.CostOverride);
+          
+          $('#btnAddPurchase').prop('disabled', true);
+          $('#btnDelPurchase').prop('disabled', false);
+          $('#btnUpdatePurchase').prop('disabled', false);
+        });
+      }
   }

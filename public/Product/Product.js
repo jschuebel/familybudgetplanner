@@ -8,6 +8,7 @@ SSS.Product = {};
 (function() {
     let self = this;
     self.mProducts = [];
+    self.LoadErrorMessage='';
 
     this.Add = function(newProduct) {
       console.log('***** ADD PRoduct ');
@@ -104,13 +105,25 @@ SSS.Product = {};
 
     this.Load = function() {
       return new Promise((resolve, reject) => {
-        $.getJSON("api/product?brk=" + (new Date()).getTime(), null, function (data) {
+        $.getJSON("api/product?brk=" + (new Date()).getTime(), null, function (data, textStatus, request) {
           console.log('product load', data);
-          resolve(data.data);
+          console.log('RowTotal', request.getResponseHeader('X-Total-Count')); 
+          resolve(data);
         })
-        .fail(function(jqXHR, textStatus, errorThrown) { alert('getJSON request failed! ' + textStatus); reject(textStatus)})
+        .fail(function(jqXHR, textStatus, errorThrown)
+        { 
+          //alert('getJSON request failed! ' + textStatus); 
+          if (jqXHR.status!=200)
+            reject(jqXHR.responseText)
+          else
+            reject(textStatus)
+        })
       });
     };
+
+    this.GetLoadError = function() {
+      return self.LoadErrorMessage;
+    }
 
     this.init = function init(){
       self.Load().then(data => {
@@ -122,7 +135,11 @@ SSS.Product = {};
           // }, 500); 
       })
       .catch(error => {
-        console.log(error);
-      });
+        console.log('Product Init catch error',error);
+        self.mPurchases = [];
+        self.LoadErrorMessage=`Load Product(${error})`;
+        RefreshProductRows();
+        SSS.Purchase.init();
+  });
     }
   }).apply(SSS.Product);
