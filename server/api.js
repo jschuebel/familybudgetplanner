@@ -148,6 +148,22 @@ router.get('/purchase', (req, res) => {
 	});
 });
 
+
+router.get('/purchase/:id', (req, res) => {
+	db.ReadPurchases().then(data => {
+		response.data = data;
+		res.set('Access-Control-Expose-Headers','X-Total-Count, X-Paging-PageSize')
+		res.set('X-Total-Count', data.length)
+		res.status(200);
+		res.json(data[0]);
+	})
+	.catch(error => {
+	  console.log(error);
+	  res.status(400);
+	  res.send(error.message);
+	});
+});
+
 //Post = Add/Insert
 router.post('/purchase', (req, res) => {
 	console.log("req.body",req.body);    //body to json from a post
